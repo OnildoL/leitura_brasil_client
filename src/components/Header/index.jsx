@@ -5,7 +5,7 @@ export function Header() {
   return (
     <Container>
       <Content>
-        <Link to="/">
+        <Link to="/main">
           <div className="logo">
             <i className="uil uil-book-open table__icon"></i>
             leitura
