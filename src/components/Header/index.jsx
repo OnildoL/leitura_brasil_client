@@ -1,27 +1,47 @@
 import { Container, Content } from "./styles"
 import { Link } from "react-router-dom"
+import { useCan } from "../../hooks/useCan"
+import { AuthContext, signOut } from "../../contexts/AuthContext"
+import { useContext } from "react"
 
 export function Header() {
+  const { user } = useContext(AuthContext)
+  const userCanSeeAdmin = useCan({
+    roles: ["developer"]
+  })
+
+  function logOut() {
+    signOut()
+  }
+
   return (
     <Container>
       <Content>
-        <Link to="/main">
-          <div className="logo">
-            <i className="uil uil-book-open table__icon"></i>
-            leitura
+          <div className="panel_logo_user">
+            <Link to="/main">
+                <div className="logo">
+                  <i className="uil uil-book-open table__icon"></i>
+                  leitura
+                </div>
+            </Link>
+            <div className="user">
+              {`Usuário: ${user.name} - Loja: ${user.store}`} 
+              <select name="" id="">
+                <option value="">Leitura Manaíra</option>
+              </select>
+            </div>
           </div>
-        </Link>
         <nav>
           <ul>
 
-            <li>
+            { userCanSeeAdmin && <li>
               admin
               <ul>
                 <Link to="/users">
                   usuários
                 </Link>
               </ul>
-            </li>
+            </li> }
 
             <li>
               gerência
@@ -68,7 +88,7 @@ export function Header() {
                 <Link to="/profiles">
                   perfil
                 </Link>
-                <li>
+                <li onClick={logOut}>
                   sair
                 </li>
               </ul>

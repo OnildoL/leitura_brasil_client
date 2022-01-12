@@ -1,6 +1,7 @@
 import Modal from "react-modal"
 import { useState } from "react";
 
+import { useWithSSRAuth } from "../../utils/withSSRAuth";
 import { Header } from "../Header"
 import { Footer } from "../Footer"
 import { api } from "../../services/api";
@@ -12,6 +13,7 @@ import { Container, Content, FormContainer } from "./styles";
 Modal.setAppElement("#root")
 
 export function Users() {
+  useWithSSRAuth()
   const [user, setUser] = useState(0)
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
@@ -39,8 +41,10 @@ export function Users() {
       store
     }
 
-    const response = await api.post("users", data)
-
+    api.post("users", data)
+      .then(response => console.log(response.data))
+      .catch(error => alert(error.response.data.message))
+    
     setUser(0)
     setPassword("")
     setName("")
@@ -117,7 +121,7 @@ export function Users() {
                 />
 
                 <select value={role} onChange={event => setRole(event.target.value)} required>
-                  <option value="">--Escolher Função--</option>
+                  <option value="">-- Escolher Função --</option>
                   <option value="administrator">Administrador</option>
                   <option value="manager">Gerente</option>
                   <option value="coordinator">Coordenador</option>
@@ -126,7 +130,7 @@ export function Users() {
                 </select>
 
                 <select value={store} onChange={event => setStore(event.target.value)} required>
-                  <option value="">--Escolher Loja--</option>
+                  <option value="">-- Escolher Loja --</option>
                   <option value="31">Leitura Manaíra</option>
                   <option value="69">Leitura Mangabeira</option>
                   <option value="04">Leitura Tacaruna</option>

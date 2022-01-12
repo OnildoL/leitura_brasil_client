@@ -1,8 +1,11 @@
 import { Header } from "../Header"
 import { Footer } from "../Footer"
 import { Container, Content } from "./styles";
+import { useWithSSRAuth } from "../../utils/withSSRAuth";
 
 export function Goals() {
+  useWithSSRAuth()
+
   return (
     <>
       <Header />

@@ -6,8 +6,8 @@ export const Container = styled.section`
 `
 
 export const Content = styled.div`
-  margin-top: 4rem;
-
+  margin-bottom: 2rem;
+  
   table {
     width: 100%;
     border-spacing: 0 0.2rem;

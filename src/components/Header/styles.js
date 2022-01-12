@@ -1,7 +1,11 @@
 import styled from "styled-components"
 
 export const Container = styled.header`
+  width: 100%;
+  top: 0;
+  left: 0;
   background: var(--blue);
+  position: fixed;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 `
 
@@ -63,5 +67,19 @@ export const Content = styled.div`
     font-weight: bold;
     text-transform: uppercase;
     color: #FFFFFF;
+  }
+
+  .panel_logo_user {
+    display: flex;
+    align-items: center;
+  }
+
+  .user {
+    margin-left: 3rem;
+    color: #FFFFFF;
+
+    select {
+      margin-left: 1rem;
+    }
   }
 `

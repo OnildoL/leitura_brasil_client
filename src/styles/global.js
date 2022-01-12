@@ -39,6 +39,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     background: var(--background);
     -webkit-font-smoothing: antialiased;
+    overflow-y: overlay;
   }
 
   body, input, textarea, button {
@@ -106,5 +107,20 @@ export const GlobalStyle = createGlobalStyle`
   
   .table__icon {
     margin-right: var(--mb-0-25);
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.6rem;
+    background-color: var(--background);
+    border-radius: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--text-body);
+    border-radius: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-sub-title);
   }
 `

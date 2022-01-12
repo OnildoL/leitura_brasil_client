@@ -8,7 +8,8 @@ export function Table() {
   useEffect(() => {
     api.get("users")
       .then(response => setUsers(response.data))
-  }, [users])
+      .catch(error => console.log(error))
+  }, [])
 
   return (
     <Container>

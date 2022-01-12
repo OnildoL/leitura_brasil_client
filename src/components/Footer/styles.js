@@ -6,7 +6,7 @@ export const Container = styled.footer`
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color: var(--body-color);
+  background: var(--shape);
   text-align: center;
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
 `
