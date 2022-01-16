@@ -17,6 +17,12 @@ export const Content = styled.form`
   padding: 45px;
   border-radius: 0.25rem;
 
+  img {
+    display: flex;
+    margin: 0 auto;
+    margin-bottom: 2rem;
+  }
+
   input {
     width: 100%;
     padding: 0 1.5rem;

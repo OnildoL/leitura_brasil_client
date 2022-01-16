@@ -89,6 +89,33 @@ export const GlobalStyle = createGlobalStyle`
     padding: 3rem;
     position: relative;
     border-radius: 0.24rem;
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem 2rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        padding: 1rem 2rem;
+        border: 0;
+        color: var(--text-body);
+
+        &:first-child {
+          color: var(--text-title)
+        }
+      }
+    }
   }
 
   .react-modal-close {

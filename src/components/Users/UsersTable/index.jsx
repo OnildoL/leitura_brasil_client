@@ -1,6 +1,7 @@
 import { api } from "../../../services/api"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Container, Content } from "./styles"
+import { AuthContext } from "../../../contexts/AuthContext"
 
 export function Table() {
   const [users, setUsers] = useState([])
@@ -23,6 +24,7 @@ export function Table() {
               <th>Loja</th>
               <th>Criado</th>
               <th>Atualizado</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -38,7 +40,6 @@ export function Table() {
                       {
                         new Intl.DateTimeFormat('pt-BR', { 
                           dateStyle: "short", 
-                          timeStyle: "short" 
                         }).format(new Date(user.created_at))
                       }
                     </td>
@@ -46,9 +47,15 @@ export function Table() {
                       {
                         new Intl.DateTimeFormat('pt-BR', { 
                           dateStyle: "short", 
-                          timeStyle: "short" 
                         }).format(new Date(user.updated_at))
                       }
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                      >
+                        <i className="uil uil-pen"></i>
+                      </button>
                     </td>
                   </tr>
                 )

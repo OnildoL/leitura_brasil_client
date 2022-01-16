@@ -1,4 +1,5 @@
 import Modal from "react-modal"
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { useWithSSRAuth } from "../../utils/withSSRAuth";
@@ -9,11 +10,22 @@ import { api } from "../../services/api";
 import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer } from "./styles";
+import { useCan } from "../../hooks/useCan";
 
 Modal.setAppElement("#root")
 
 export function Users() {
   useWithSSRAuth()
+
+  const navigate = useNavigate()
+  const userCanSeeUsers = useCan({
+    roles: ["developer", "manager"]
+  })
+
+  if (!userCanSeeUsers) {
+    navigate("/main")
+  }
+
   const [user, setUser] = useState(0)
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")

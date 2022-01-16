@@ -7,7 +7,7 @@ import { useContext } from "react"
 export function Header() {
   const { user } = useContext(AuthContext)
   const userCanSeeAdmin = useCan({
-    roles: ["developer"]
+    roles: ["developer", "manager"]
   })
 
   function logOut() {
@@ -25,10 +25,16 @@ export function Header() {
                 </div>
             </Link>
             <div className="user">
-              {`Usuário: ${user.name} - Loja: ${user.store}`} 
-              <select name="" id="">
-                <option value="">Leitura Manaíra</option>
-              </select>
+              {`Usuário: ${user?.name}`}
+              { userCanSeeAdmin && <select>
+                <option value="31">Leitura Manaíra</option>
+                <option value="69">Leitura Mangabeira</option>
+                <option value="04">Leitura Tacaruna</option>
+                <option value="109">Leitura Riomar</option>
+                <option value="98">Leitura Recife</option>
+                <option value="108">Leitura Caruaru</option>
+                <option value="76">Leitura Campina Grande</option>
+              </select>}
             </div>
           </div>
         <nav>
@@ -49,8 +55,11 @@ export function Header() {
                 <Link to="/goals">
                   metas de compra e pedidos
                 </Link>
-                <Link to="/hits">
+                <Link to="#"> {/* /hits */}
                   acertos
+                </Link>
+                <Link to="#"> {/* /devolutions */}
+                  devoluções
                 </Link>
               </ul>
             </li>
@@ -58,34 +67,22 @@ export function Header() {
             <li>
               cpd
               <ul>
-                <Link to="/notes">
+                <Link to="#"> {/* /notes */}
                   notas e produtos
                 </Link>
-                <Link to="/missings">
-                  faltantes
+                <Link to="#"> {/* /missings */}
+                  faltantes e divergências
                 </Link>
-                <Link to="/divergences">
-                  divergências
-                </Link>
-                <Link to="/reports">
+                <Link to="#"> {/* /reports */}
                   controle de relatórios
                 </Link>
               </ul>
             </li>
 
             <li>
-              livraria
+              <i className="uil uil-apps"></i>
               <ul>
-                <Link to="/devolutions">
-                  devoluções
-                </Link>
-              </ul>
-            </li>
-
-            <li>
-              configurações
-              <ul>
-                <Link to="/profiles">
+                <Link to="#"> {/* /profiles */}
                   perfil
                 </Link>
                 <li onClick={logOut}>

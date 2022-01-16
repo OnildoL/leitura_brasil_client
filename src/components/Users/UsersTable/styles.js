@@ -23,7 +23,6 @@ export const Content = styled.div`
     td {
       padding: 1rem 2rem;
       border: 0;
-      background: var(--shape);
       color: var(--text-body);
 
       &:first-child {
@@ -33,9 +32,15 @@ export const Content = styled.div`
   }
 
   .panel {
-    border-radius: 0.25rem;
-    padding: 1rem;
+    background: var(--shape);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    background: #FFFFFF;
+  }
+  
+  .panel:hover {
+    background: var(--blue);
+
+    td {
+      color: #FFFFFF;
+    }
   }
 `

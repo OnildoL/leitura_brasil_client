@@ -1,9 +1,13 @@
 import { useContext, useState } from "react"
 import  { useNavigate } from "react-router-dom"
 import { AuthContext } from "../../contexts/AuthContext"
+import logoImg from "../../assets/Img/logo_leitura.png"
 import { Container, Content } from "./styles"
+import { useTheTokenIfItExists } from "../../utils/withSSRAuth"
 
 export function Login() {
+  useTheTokenIfItExists()
+
   let navigate = useNavigate()
   const [user, setUser] = useState("")
   const [password, setPassword] = useState("")
@@ -27,6 +31,7 @@ export function Login() {
   return (
     <Container>
       <Content onSubmit={handleSubmit}>
+        <img src={logoImg} alt="Logo" />
         <input 
           type="text" 
           placeholder="Usuário"

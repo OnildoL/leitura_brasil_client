@@ -12,3 +12,14 @@ export function useWithSSRAuth() {
     }
   }, [])
 }
+
+export function useTheTokenIfItExists() {
+  const cookies = parseCookies()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (cookies["leitura_brasil.token"]) {
+      navigate("/main")
+    }
+  }, [])
+}
