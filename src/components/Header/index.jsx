@@ -13,7 +13,7 @@ export function Header() {
   function logOut() {
     signOut()
   }
-
+  
   return (
     <Container>
       <Content>
@@ -26,15 +26,6 @@ export function Header() {
             </Link>
             <div className="user">
               {`Usuário: ${user?.name}`}
-              { userCanSeeAdmin && <select>
-                <option value="31">Leitura Manaíra</option>
-                <option value="69">Leitura Mangabeira</option>
-                <option value="04">Leitura Tacaruna</option>
-                <option value="109">Leitura Riomar</option>
-                <option value="98">Leitura Recife</option>
-                <option value="108">Leitura Caruaru</option>
-                <option value="76">Leitura Campina Grande</option>
-              </select>}
             </div>
           </div>
         <nav>

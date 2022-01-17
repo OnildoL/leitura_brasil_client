@@ -7,12 +7,28 @@ import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer, Sectors } from "./styles"
 import { useWithSSRAuth } from "../../utils/withSSRAuth"
+import { useCan } from "../../hooks/useCan"
+import { api } from "../../services/api"
+import { useNotification } from "../../hooks/useNotification"
+import { ModalSector } from "./ModalSector"
 
 export function Goals() {
   useWithSSRAuth()
 
+  const dispatch = useNotification()
+
+  const userCanSeeAdmin = useCan({
+    roles: ["developer", "manager"]
+  })
+
+  const [sector, setSector] = useState("")
+  const [goal, setGoal] = useState("")
+  const [month, setMonth] = useState("")
+  const [store, setStore] = useState("")
+
   const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false)
   const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
+  const [toSector, setToSector] = useState("")
 
   function handleOpenSectorModal() {
     setIsSectorModalOpen(true)
@@ -30,6 +46,53 @@ export function Goals() {
     setIsNewGoalModalOpen(false)
   }
 
+  const [sectors, setSectors] = useState([])
+
+  function handleSectorFiltering(sector) {
+    setToSector(sector)
+    api.get("goals")
+    .then(response => {
+      const newGoals = response.data.filter(goal => goal.sector === sector && (goal.year === '2022'))
+
+      setSectors(newGoals)
+      handleOpenSectorModal()
+    })
+    .catch(error => console.log(error))
+  }
+
+  async function handleCreateNewGoal(event) {
+    event.preventDefault()
+
+    const data = { 
+      sector, 
+      goal, 
+      year: new Date().getFullYear(), 
+      month, 
+      store 
+    }
+
+    api.post("goals", data)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Meta cadastrada com sucesso!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+
+    setSector("")
+    setGoal("")
+    setMonth("")
+    setStore("")
+    
+    handleCloseNewGoalModal()
+  }
+
   return (
     <>
       <Header />
@@ -43,7 +106,7 @@ export function Goals() {
             <p>Listagem de todas as metas e pedidos.</p>
           </section>
 
-          <section className="panel">
+          {userCanSeeAdmin && <section className="panel">
             <h1>
               <i className="uil uil-setting table__icon"></i>
               Opções
@@ -70,10 +133,10 @@ export function Goals() {
                 <img src={closeImg} alt="Fechar modal" />
               </button>
 
-              <FormContainer>
+              <FormContainer onSubmit={handleCreateNewGoal}>
                 <h2>Cadastrar meta</h2>
 
-                <select required>
+                <select value={sector} onChange={event => setSector(event.target.value)} required>
                   <option value="">-- Escolher setor --</option>
                   <option value="livraria">Livraria</option>
                   <option value="hq">HQ</option>
@@ -86,44 +149,51 @@ export function Goals() {
                 <input
                   type="text"
                   placeholder="Meta"
+                  value={goal}
+                  onChange={event => setGoal(event.target.value)}
                   required
                 />
 
-                <input
-                  type="number"
-                  placeholder="Ano"
-                  required
-                />
-
-                <select required>
+                <select value={month} onChange={event => setMonth(event.target.value)} required>
                   <option value="">-- Escolher mês --</option>
-                  <option value="">FEV</option>
-                  <option value="">MAR</option>
-                  <option value="">ABR</option>
-                  <option value="">MAI</option>
-                  <option value="">JUN</option>
-                  <option value="">JUL</option>
-                  <option value="">AGO</option>
-                  <option value="">SET</option>
-                  <option value="">OUT</option>
-                  <option value="">NOV</option>
-                  <option value="">DEZ</option>
-                  <option value="">JAN</option>
+                  <option value="FEV">Fevereiro</option>
+                  <option value="MAR">Março</option>
+                  <option value="ABR">Abril</option>
+                  <option value="MAI">Maio</option>
+                  <option value="JUN">Junho</option>
+                  <option value="JUL">Julho</option>
+                  <option value="AGO">Agosto</option>
+                  <option value="SET">Setembro</option>
+                  <option value="OUT">Outubro</option>
+                  <option value="NOV">Novembro</option>
+                  <option value="DEZ">Dezembro</option>
+                  <option value="JAN">Janeiro</option>
                 </select>
   
+                <select value={store} onChange={event => setStore(event.target.value)} required>
+                  <option value="">-- Escolher loja --</option>
+                  <option value="31">Leitura Manaíra</option>
+                  <option value="69">Leitura Mangabeira</option>
+                  <option value="04">Leitura Tacaruna</option>
+                  <option value="109">Leitura Riomar</option>
+                  <option value="98">Leitura Recife</option>
+                  <option value="108">Leitura Caruaru</option>
+                  <option value="76">Leitura Campina Grande</option>
+                </select>
+
                 <button type="submit">
                   Cadastrar
                 </button>
               </FormContainer>
             </Modal>
-          </section>
+          </section>}
 
           <Sectors>
             <div>
               <i className="uil uil-books"></i>
               <h3>livraria</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("livraria")}
                 type="button"
               >
                 Visualizar
@@ -134,7 +204,7 @@ export function Goals() {
               <i className="uil uil-book-open"></i>
               <h3>hq</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("hq")}
                 type="button"
               >
                 Visualizar
@@ -145,7 +215,7 @@ export function Goals() {
               <i className="uil uil-desktop"></i>
               <h3>informatica, games e midias</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("informatica, games e midias")}
                 type="button"
               >
                 Visualizar
@@ -156,7 +226,7 @@ export function Goals() {
               <i className="uil uil-gift"></i>
               <h3>presentes</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("presentes")}
                 type="button"
               >
                 Visualizar
@@ -167,7 +237,7 @@ export function Goals() {
               <i className="uil uil-pen"></i>
               <h3>papelaria</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("papelaria")}
                 type="button"
               >
                 Visualizar
@@ -178,7 +248,7 @@ export function Goals() {
               <i className="uil uil-bell"></i>
               <h3>volta as aulas</h3>
               <button
-                onClick={handleOpenSectorModal}
+                onClick={() => handleSectorFiltering("volta as aulas")}
                 type="button"
               >
                 Visualizar
@@ -186,49 +256,13 @@ export function Goals() {
               </button>
             </div>
 
-            <Modal
-              isOpen={isSectorModalOpen}
+            <ModalSector 
+              isOpen={isSectorModalOpen} 
               onRequestClose={handleCloseSectorModal}
-              overlayClassName="react-modal-overlay"
-              className="react-modal-content"
-            >
-              <button 
-                type="button" 
-                onClick={handleCloseSectorModal} 
-                className="react-modal-close"
-              >
-                <img src={closeImg} alt="Fechar modal" />
-              </button>
+              sector={toSector}
+              sectors={sectors}
+            />
 
-              <h2>Setor</h2>
-
-              <table className="table_modal">
-                <thead>
-                  <tr>
-                    <th>Ano</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>2020</td>
-                    <td>
-                      <button
-                      
-                      >
-                        <i className="uil uil-search-alt"></i>
-                      </button>
-                      <button
-                      
-                      >
-                        <i className="uil uil-usd-circle"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-            </Modal>
           </Sectors>
         </Content>
       </Container>

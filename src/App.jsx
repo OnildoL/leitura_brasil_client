@@ -9,24 +9,22 @@ import { AuthProvider } from "./contexts/AuthContext"
 
 export function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={ <Login /> }/>
-          <Route path="/main" element={ <Main /> }/>
-          <Route path="/goals" element={<Goals />}/>
-          <Route
-            path="/users" 
-            element={
-              <>
-                <Users />
-                <Table />
-              </>
-            }
-          />
-        </Routes>
-        <GlobalStyle />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={ <Login /> }/>
+        <Route path="/main" element={ <Main /> }/>
+        <Route path="/goals" element={<Goals />}/>
+        <Route
+          path="/users" 
+          element={
+            <>
+              <Users />
+              <Table />
+            </>
+          }
+        />
+      </Routes>
+      <GlobalStyle />
+    </Router>
   )
 }

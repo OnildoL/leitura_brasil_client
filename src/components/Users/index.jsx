@@ -11,11 +11,14 @@ import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer } from "./styles";
 import { useCan } from "../../hooks/useCan";
+import { useNotification } from "../../hooks/useNotification";
 
 Modal.setAppElement("#root")
 
 export function Users() {
   useWithSSRAuth()
+
+  const dispatch = useNotification()
 
   const navigate = useNavigate()
   const userCanSeeUsers = useCan({
@@ -54,8 +57,18 @@ export function Users() {
     }
 
     api.post("users", data)
-      .then(response => console.log(response.data))
-      .catch(error => alert(error.response.data.message))
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Usuário cadastrado com sucesso!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
     
     setUser(0)
     setPassword("")

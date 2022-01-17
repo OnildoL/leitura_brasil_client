@@ -150,4 +150,70 @@ export const GlobalStyle = createGlobalStyle`
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--text-sub-title);
   }
+
+  .notification_wrapper {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    width: 300px;
+  }
+
+  .notification_item {
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+    background: var(--shape);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    animation: SlideLeft 0.4s;
+    animation-fill-mode: forwards;
+    width: 300px;
+
+    h2 {
+      font-size: 1rem;
+      padding: 10px;
+    }
+  }
+
+  @keyframes SlideLeft {
+    0% {
+      margin-left: 120%;
+    }
+
+    100% {
+      margin-left: 0;
+    }
+  }
+
+  @keyframes SlideRight {
+    0% {
+      margin-left: 0;
+    }
+
+    100% {
+      margin-left: 120%;
+    }
+  }
+
+  .notification_item.exit {
+    animation: SlideRight 0.4s;
+    animation-fill-mode: forwards;
+  }
+
+  .notification_item p {
+    margin: 0;
+    padding: 15px;
+  }
+
+  .notification_item .bar {
+    height: 10px;
+    background-color: #DD5554;
+  }
+
+  .notification_item.success .bar {
+    background: #6fdd54;
+  }
+
+  .notification_item.error .bar {
+    background: #DD5554;
+  }
 `

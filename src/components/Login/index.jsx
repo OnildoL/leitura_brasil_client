@@ -4,9 +4,12 @@ import { AuthContext } from "../../contexts/AuthContext"
 import logoImg from "../../assets/Img/logo_leitura.png"
 import { Container, Content } from "./styles"
 import { useTheTokenIfItExists } from "../../utils/withSSRAuth"
+import { useNotification } from "../../hooks/useNotification"
 
 export function Login() {
   useTheTokenIfItExists()
+  
+  const dispatch = useNotification()
 
   let navigate = useNavigate()
   const [user, setUser] = useState("")
@@ -23,8 +26,16 @@ export function Login() {
     }
 
     const response = await signIn(data)
+
     if (response) {
       navigate("/main")
+
+      ;(() => {
+        dispatch({
+          type: "success",
+          message: `Bem-vindo(a)!`,
+        })
+      })()
     }
   }
 
