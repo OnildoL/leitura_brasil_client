@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import Modal from "react-modal"
 import closeImg from "../../../assets/Img/close.svg"
 
@@ -8,7 +7,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       overlayClassName="react-modal-overlay"
-      className="react-modal-content"
+      className="react-modal-content-table-goals"
     >
       <button 
         type="button" 
@@ -24,6 +23,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
         <thead>
           <tr>
             <th>Ano</th>
+            <th>Loja</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -33,7 +33,19 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               return (
                 <tr key={sector.id}>
                   <td>{sector.year}</td>
-                  <td>{sector.sector}</td>
+                  <td>{sector.store}</td>
+                  <td className="button_icon">
+                    <button
+                      type="button"
+                    >
+                      <i className="uil uil-search-alt"></i>
+                    </button>
+                    <button
+                      type="button"
+                    >
+                      <i className="uil uil-chart-line"></i>
+                    </button>
+                  </td>
                 </tr>
               )
             })

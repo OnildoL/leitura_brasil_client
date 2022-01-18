@@ -1,5 +1,5 @@
 import Modal from "react-modal"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Header } from "../Header"
 import { Footer } from "../Footer"
 
@@ -11,15 +11,24 @@ import { useCan } from "../../hooks/useCan"
 import { api } from "../../services/api"
 import { useNotification } from "../../hooks/useNotification"
 import { ModalSector } from "./ModalSector"
+import { AuthContext } from "../../contexts/AuthContext"
 
 export function Goals() {
   useWithSSRAuth()
+  const { user } = useContext(AuthContext)
 
   const dispatch = useNotification()
 
   const userCanSeeAdmin = useCan({
     roles: ["developer", "manager"]
   })
+
+  const userCanSeeSelectStore = useCan({
+    roles: ["manager"] // Criar table de permissions
+  })
+
+  const [selectedStore, setSelectedStore] = useState("")
+  const [toSector, setToSector] = useState("")
 
   const [sector, setSector] = useState("")
   const [goal, setGoal] = useState("")
@@ -28,7 +37,6 @@ export function Goals() {
 
   const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false)
   const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
-  const [toSector, setToSector] = useState("")
 
   function handleOpenSectorModal() {
     setIsSectorModalOpen(true)
@@ -50,11 +58,33 @@ export function Goals() {
 
   function handleSectorFiltering(sector) {
     setToSector(sector)
+
     api.get("goals")
     .then(response => {
-      const newGoals = response.data.filter(goal => goal.sector === sector && (goal.year === '2022'))
+      let yearsSet = new Set()
+      let years = []
 
-      setSectors(newGoals)
+      const allGoalsPerYear = response.data
+      
+      for (const goalData of allGoalsPerYear) {
+        const theStoreis = !selectedStore ? user.store : selectedStore
+        if (
+          !yearsSet.has(goalData.year) && 
+          goalData.sector === sector && 
+          theStoreis === goalData.store
+        ) {
+          yearsSet.add(goalData.year)
+          years.push({
+            id: goalData.id,
+            year: goalData.year,
+            store: goalData.store,
+            sector: goalData.sector
+            })
+        }
+      }
+
+      setSectors(years)
+
       handleOpenSectorModal()
     })
     .catch(error => console.log(error))
@@ -75,7 +105,7 @@ export function Goals() {
       .then(response => {
         dispatch({
           type: "success",
-          message: `Meta cadastrada com sucesso!`,
+          message: `Meta cadastrada!`,
         })
       })
       .catch(error => {
@@ -111,6 +141,16 @@ export function Goals() {
               <i className="uil uil-setting table__icon"></i>
               Opções
             </h1>
+            {userCanSeeSelectStore && <select value={selectedStore} onChange={event => setSelectedStore(event.target.value)}>
+              <option value="">-- Escolher Loja --</option>
+              <option value="31">Leitura Manaíra</option>
+              <option value="69">Leitura Mangabeira</option>
+              <option value="04">Leitura Tacaruna</option>
+              <option value="109">Leitura Riomar</option>
+              <option value="98">Leitura Recife</option>
+              <option value="108">Leitura Caruaru</option>
+              <option value="76">Leitura Campina Grande</option>
+            </select>}
             <button
               onClick={handleOpenNewGoalModal}
               type="button"

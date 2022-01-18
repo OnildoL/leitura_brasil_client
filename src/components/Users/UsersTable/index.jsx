@@ -50,7 +50,7 @@ export function Table() {
                         }).format(new Date(user.updated_at))
                       }
                     </td>
-                    <td>
+                    <td className="button_icon_users">
                       <button
                         type="button"
                       >

@@ -60,7 +60,7 @@ export function Users() {
       .then(response => {
         dispatch({
           type: "success",
-          message: `Usuário cadastrado com sucesso!`,
+          message: `Usuário cadastrado!`,
         })
       })
       .catch(error => {
@@ -89,7 +89,7 @@ export function Users() {
               <i className="uil uil-users-alt table__icon"></i>
               Usuários
             </h1>
-            <p>Área para administradores e gerentes.</p>
+            <p>Cadastro de usuários.</p>
           </section>
 
           <section className="panel">
@@ -147,7 +147,6 @@ export function Users() {
 
                 <select value={role} onChange={event => setRole(event.target.value)} required>
                   <option value="">-- Escolher Função --</option>
-                  <option value="administrator">Administrador</option>
                   <option value="manager">Gerente</option>
                   <option value="coordinator">Coordenador</option>
                   <option value="cpd">Cpd</option>

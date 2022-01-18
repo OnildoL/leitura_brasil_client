@@ -118,6 +118,44 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .react-modal-content-table-goals {
+    width: 100%;
+    max-height: 550px;
+    max-width: 576px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 3rem;
+    position: relative;
+    border-radius: 0.24rem;
+    
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem 2rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        padding: 1rem 2rem;
+        border: 0;
+        color: var(--text-body);
+
+        &:first-child {
+          color: var(--text-title)
+        }
+      }
+    }
+  }
+
   .react-modal-close {
     position: absolute;
     right: 1.5rem;
@@ -134,6 +172,19 @@ export const GlobalStyle = createGlobalStyle`
   
   .table__icon {
     margin-right: var(--mb-0-25);
+  }
+
+  .button_icon {
+    button {
+      border: 0;
+      font-size: 1rem;
+      margin-right: 10px;
+      background: none;
+
+      i {
+        color: var(--blue);
+      }
+    }
   }
 
   ::-webkit-scrollbar {
@@ -159,9 +210,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .notification_item {
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+    /* box-shadow: 0 1px 10px rgba(0, 0, 0, 0.45); */
     background: var(--shape);
-    border-radius: 10px;
     overflow: hidden;
     margin-bottom: 20px;
     animation: SlideLeft 0.4s;
@@ -210,10 +260,20 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .notification_item.success .bar {
-    background: #6fdd54;
+    background-color: hsla(0,0%,100%,.7);
   }
 
   .notification_item.error .bar {
+    background-color: hsla(0,0%,100%,.7);
+  }
+
+  .notification_item.success {
+    color: #FFFFFF;
+    background: #57af41;
+  }
+
+  .notification_item.error {
+    color: #FFFFFF;
     background: #DD5554;
   }
 `

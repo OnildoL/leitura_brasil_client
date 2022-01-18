@@ -66,6 +66,24 @@ export const Content = styled.div`
       font-size: 1.2rem;
     }
 
+    select {
+      width: 100%;
+      padding: 0 1.5rem;
+      margin-top: 1rem;
+      height: 2rem;
+      border-radius: 0.25rem;
+
+      border: 1px solid #D7D7D7;
+      background: #E7E9EE;
+
+      font-weight: 400;
+      font-size: 1rem;
+
+      &::placeholder {
+        color: var(--text-body);
+      }
+    }
+
     p {
       color: var(--text-sub-title);
       font-size: 1rem;

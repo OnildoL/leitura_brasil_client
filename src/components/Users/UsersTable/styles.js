@@ -42,5 +42,22 @@ export const Content = styled.div`
     td {
       color: #FFFFFF;
     }
+
+    i {
+      color: #FFFFFF;
+    }
+  }
+
+  .button_icon_users {
+    button {
+      border: 0;
+      font-size: 1rem;
+      margin-right: 10px;
+      background: none; 
+    }
+
+    i {
+      color: var(--blue);
+    }
   }
 `
