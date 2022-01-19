@@ -3,13 +3,13 @@ import { AuthContext } from "../contexts/AuthContext"
 
 export function useCan({ permissions, roles }) {
   const { user, isAuthenticated } = useContext(AuthContext)
-  
+
   if (!isAuthenticated) {
     return false
   }
 
   if (permissions) {
-    const hasAllPermissions = permissions.every(permission => {
+    const hasAllPermissions = permissions.some(permission => {
       return user.permission.includes(permission)
     })
 

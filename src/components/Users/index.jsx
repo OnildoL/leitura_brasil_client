@@ -10,8 +10,8 @@ import { api } from "../../services/api";
 import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer } from "./styles";
-import { useCan } from "../../hooks/useCan";
 import { useNotification } from "../../hooks/useNotification";
+import { usePermission } from "../../hooks/usePermission";
 
 Modal.setAppElement("#root")
 
@@ -21,11 +21,10 @@ export function Users() {
   const dispatch = useNotification()
 
   const navigate = useNavigate()
-  const userCanSeeUsers = useCan({
-    roles: ["developer", "manager"]
-  })
 
-  if (!userCanSeeUsers) {
+  const { userCanSeeDev } = usePermission()
+
+  if (!userCanSeeDev) {
     navigate("/main")
   }
 
@@ -97,13 +96,14 @@ export function Users() {
               <i className="uil uil-setting table__icon"></i>
               Opções
             </h1>
-            <button
+
+            {userCanSeeDev && <button
               onClick={handleOpenNewUserModal}
               type="button"
             >
               <i className="uil uil-user table__icon"></i>
               Novo usuário
-            </button>
+            </button>}
 
             <Modal
               isOpen={isNewUserModalOpen}

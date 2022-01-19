@@ -90,7 +90,7 @@ export const Content = styled.div`
     }
 
     button {
-      margin-top: 20px;
+      margin: 20px 5px 0;
       font-size: 1rem;
       color: #FFFFFF;
       background: var(--blue);

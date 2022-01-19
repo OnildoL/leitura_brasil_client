@@ -20,9 +20,9 @@ export function AuthProvider({ children }) {
     
     if (token) {
       api.get("/users/user").then(response => {
-        const { user, name, role, store } = response.data
+        const { user, name, role, store, permission } = response.data
 
-        setUser({ user, name, role, store })
+        setUser({ user, name, role, store, permission })
       }).catch(() => {
         signOut()
       })
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
         password
       })
       
-      const { user: userNumber, name, role, store } = data.user
+      const { user: userNumber, name, role, store, permission } = data.user
       const { token, refresh_token } = data
 
       setCookie(undefined, "leitura_brasil.token", token, {
@@ -48,8 +48,8 @@ export function AuthProvider({ children }) {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/"
       })
-
-      setUser({ userNumber, name, role, store })
+      
+      setUser({ userNumber, name, role, store, permission})
 
       api.defaults.headers["Authorization"] = `Bearer ${token}`
 

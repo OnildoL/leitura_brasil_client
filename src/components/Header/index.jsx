@@ -1,14 +1,13 @@
 import { Container, Content } from "./styles"
 import { Link } from "react-router-dom"
-import { useCan } from "../../hooks/useCan"
 import { AuthContext, signOut } from "../../contexts/AuthContext"
 import { useContext } from "react"
+import { usePermission } from "../../hooks/usePermission"
 
 export function Header() {
   const { user } = useContext(AuthContext)
-  const userCanSeeAdmin = useCan({
-    roles: ["developer", "manager"]
-  })
+
+  const { userCanSeeDev } = usePermission()
 
   function logOut() {
     signOut()
@@ -31,7 +30,7 @@ export function Header() {
         <nav>
           <ul>
 
-            { userCanSeeAdmin && <li>
+            { userCanSeeDev && <li>
               admin
               <ul>
                 <Link to="/users">

@@ -6,12 +6,13 @@ import { Footer } from "../Footer"
 import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer, Sectors } from "./styles"
+
 import { useWithSSRAuth } from "../../utils/withSSRAuth"
-import { useCan } from "../../hooks/useCan"
 import { api } from "../../services/api"
 import { useNotification } from "../../hooks/useNotification"
 import { ModalSector } from "./ModalSector"
 import { AuthContext } from "../../contexts/AuthContext"
+import { usePermission } from "../../hooks/usePermission"
 
 export function Goals() {
   useWithSSRAuth()
@@ -19,13 +20,7 @@ export function Goals() {
 
   const dispatch = useNotification()
 
-  const userCanSeeAdmin = useCan({
-    roles: ["developer", "manager"]
-  })
-
-  const userCanSeeSelectStore = useCan({
-    roles: ["manager"] // Criar table de permissions
-  })
+  const { userCanSeeAdmin, userCanSeeSelectStore } = usePermission()
 
   const [selectedStore, setSelectedStore] = useState("")
   const [toSector, setToSector] = useState("")
@@ -157,6 +152,12 @@ export function Goals() {
             >
               <i className="uil uil-trophy table__icon"></i>
               Nova meta
+            </button>
+            <button
+              type="button"
+            >
+              <i className="uil uil-shopping-cart-alt table__icon"></i>
+              Novo pedido
             </button>
 
             <Modal

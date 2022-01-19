@@ -7,7 +7,7 @@ export const GlobalStyle = createGlobalStyle`
     --blue-light: #0b4274;
     --text-title: #29292E;
     --text-sub-title: #A8A8B3;
-    --text-body: #969CB3;
+    --text-body: #2d2f36;
     --shape: #FFFFFF;
 
     --mb-0-25: 0.25rem;
@@ -108,6 +108,47 @@ export const GlobalStyle = createGlobalStyle`
 
       td {
         padding: 1rem 2rem;
+        border: 0;
+        color: var(--text-body);
+
+        &:first-child {
+          color: var(--text-title)
+        }
+      }
+    }
+  }
+
+  .react-modal-content-goals {
+    width: 1120px;
+    max-height: 850px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 5rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    h2 {
+      margin-top: 1.2rem;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem 1rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        padding: 1rem 1rem;
         border: 0;
         color: var(--text-body);
 

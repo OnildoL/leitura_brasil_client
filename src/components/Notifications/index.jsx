@@ -13,7 +13,7 @@ export function NotificationProvider(props) {
       default:
         return state
     }
-  }, [])// colocar notificações aqui
+  }, [])
 
   return (
     <NotificationContext.Provider value={dispatch}>

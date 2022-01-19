@@ -1,4 +1,5 @@
 import { useContext } from "react"
+import { v4 } from "uuid"
 import { NotificationContext } from "../components/Notifications"
 
 export function useNotification() {
@@ -8,7 +9,7 @@ export function useNotification() {
     dispatch({
       type: "add_notification",
       payload: {
-        id: "1283jh9812hj39812",
+        id: v4(),
         ...props
       }
     })
