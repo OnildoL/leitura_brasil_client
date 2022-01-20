@@ -161,8 +161,8 @@ export const GlobalStyle = createGlobalStyle`
 
   .react-modal-content-table-goals {
     width: 100%;
-    max-height: 550px;
     max-width: 576px;
+    max-height: 550px;
     overflow-y: scroll;
     background: var(--shape);
     padding: 3rem;

@@ -13,6 +13,7 @@ import { useNotification } from "../../hooks/useNotification"
 import { ModalSector } from "./ModalSector"
 import { AuthContext } from "../../contexts/AuthContext"
 import { usePermission } from "../../hooks/usePermission"
+import { Manager } from "./Manager"
 
 export function Goals() {
   useWithSSRAuth()
@@ -136,16 +137,6 @@ export function Goals() {
               <i className="uil uil-setting table__icon"></i>
               Opções
             </h1>
-            {userCanSeeSelectStore && <select value={selectedStore} onChange={event => setSelectedStore(event.target.value)}>
-              <option value="">-- Escolher Loja --</option>
-              <option value="31">Leitura Manaíra</option>
-              <option value="69">Leitura Mangabeira</option>
-              <option value="04">Leitura Tacaruna</option>
-              <option value="109">Leitura Riomar</option>
-              <option value="98">Leitura Recife</option>
-              <option value="108">Leitura Caruaru</option>
-              <option value="76">Leitura Campina Grande</option>
-            </select>}
             <button
               onClick={handleOpenNewGoalModal}
               type="button"
@@ -229,7 +220,7 @@ export function Goals() {
             </Modal>
           </section>}
 
-          <Sectors>
+          {!userCanSeeSelectStore && <Sectors>
             <div>
               <i className="uil uil-books"></i>
               <h3>livraria</h3>
@@ -304,7 +295,10 @@ export function Goals() {
               sectors={sectors}
             />
 
-          </Sectors>
+          </Sectors>}
+
+          {userCanSeeSelectStore && <Manager />}
+
         </Content>
       </Container>
       <Footer />
