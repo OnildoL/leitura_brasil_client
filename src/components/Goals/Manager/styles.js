@@ -9,7 +9,7 @@ export const Sectors = styled.section`
   gap: 1rem;
 
   div {
-    height: 15rem;
+    height: 20rem;
     background: var(--shape);
     padding: 2rem;
     border-radius: 0.25rem;
@@ -37,8 +37,33 @@ export const Sectors = styled.section`
     }
 
     h3 {
+      margin: 1rem 0 0;
       font-size: 1rem;
       text-transform: uppercase;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 0 1.5rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+
+    border: 1px solid #D7D7D7;
+    background: #E7E9EE;
+
+    font-weight: 400;
+    font-size: 1rem;
+
+    &::placeholder {
+      color: var(--text-body);
+    }
+
+    & + input {
+      margin-top: 1rem;
+    }
+    & + select {
+      margin-top: 1rem;
     }
   }
 `
