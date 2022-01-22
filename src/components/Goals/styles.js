@@ -141,3 +141,25 @@ export const Sectors = styled.section`
     }
   }
 `
+export const SectorsManager = styled.section`
+  max-width: 1120px;
+  margin: 0 auto;
+  
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  div {
+    width: 544px;
+    height: 21rem;
+    background: var(--shape);
+    padding: 2rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+    h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+  }
+`

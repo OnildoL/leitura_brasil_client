@@ -5,7 +5,7 @@ import { Footer } from "../Footer"
 
 import closeImg from "../../assets/Img/close.svg"
 
-import { Container, Content, FormContainer, Sectors } from "./styles"
+import { Container, Content, FormContainer, Sectors, SectorsManager } from "./styles"
 
 import { useWithSSRAuth } from "../../utils/withSSRAuth"
 import { api } from "../../services/api"
@@ -21,7 +21,7 @@ export function Goals() {
 
   const dispatch = useNotification()
 
-  const { userCanSeeAdmin, userCanSeeSelectStore } = usePermission()
+  const { userCanSeeAdmin, userCanSeeSelectStore, userCanSeeDev } = usePermission()
 
   const [selectedStore, setSelectedStore] = useState("")
   const [toSector, setToSector] = useState("")
@@ -94,7 +94,7 @@ export function Goals() {
       goal, 
       year: new Date().getFullYear(), 
       month, 
-      store 
+      store: !store ? user.store : store
     }
 
     api.post("goals", data)
@@ -172,7 +172,7 @@ export function Goals() {
                   <option value="">-- Escolher setor --</option>
                   <option value="livraria">Livraria</option>
                   <option value="hq">HQ</option>
-                  <option value="informatica, games e midias">Informatica, games e midias</option>
+                  <option value="informatica">Informatica, games e midias</option>
                   <option value="presentes">Presentes</option>
                   <option value="papelaria">Papelaria</option>
                   <option value="volta as aulas">Volta as aulas</option>
@@ -202,7 +202,7 @@ export function Goals() {
                   <option value="JAN">Janeiro</option>
                 </select>
   
-                <select value={store} onChange={event => setStore(event.target.value)} required>
+                {userCanSeeDev && <select value={store} onChange={event => setStore(event.target.value)} required>
                   <option value="">-- Escolher loja --</option>
                   <option value="31">Leitura Manaíra</option>
                   <option value="69">Leitura Mangabeira</option>
@@ -211,7 +211,7 @@ export function Goals() {
                   <option value="98">Leitura Recife</option>
                   <option value="108">Leitura Caruaru</option>
                   <option value="76">Leitura Campina Grande</option>
-                </select>
+                </select>}
 
                 <button type="submit">
                   Cadastrar
@@ -247,7 +247,7 @@ export function Goals() {
               <i className="uil uil-desktop"></i>
               <h3>informatica, games e midias</h3>
               <button
-                onClick={() => handleSectorFiltering("informatica, games e midias")}
+                onClick={() => handleSectorFiltering("informatica")}
                 type="button"
               >
                 Visualizar
@@ -297,7 +297,15 @@ export function Goals() {
 
           </Sectors>}
 
-          {userCanSeeSelectStore && <Manager />}
+          {userCanSeeSelectStore && <SectorsManager>
+            <Manager store="31" store_name="leitura manaíra" isOpen={handleSectorFiltering} />
+            <Manager store="69" store_name="leitura mangabeira" isOpen={handleSectorFiltering} />
+            <Manager store="04" store_name="leitura tacaruna" isOpen={handleSectorFiltering} />
+            <Manager store="109" store_name="leitura riomar" isOpen={handleSectorFiltering} />
+            <Manager store="98" store_name="leitura recife" isOpen={handleSectorFiltering} />
+            <Manager store="108" store_name="leitura caruaru" isOpen={handleSectorFiltering} />
+            <Manager store="76" store_name="leitura campina grande" isOpen={handleSectorFiltering} />
+          </SectorsManager>}
 
         </Content>
       </Container>
