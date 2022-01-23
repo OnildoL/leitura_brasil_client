@@ -89,7 +89,7 @@ export const Content = styled.div`
       font-size: 1rem;
     }
 
-    button {
+    .button {
       margin: 20px 5px 0;
       font-size: 1rem;
       color: #FFFFFF;
@@ -161,5 +161,13 @@ export const SectorsManager = styled.section`
       font-size: 1rem;
       text-transform: uppercase;
     }
+  }
+
+  button {
+    font-size: 1rem;
+    color: #000000;
+    background: none;
+    border: 0;
+    border-radius: 0.25rem;
   }
 `

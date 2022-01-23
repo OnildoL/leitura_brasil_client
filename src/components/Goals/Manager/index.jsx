@@ -1,13 +1,57 @@
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { useNotification } from "../../../hooks/useNotification";
 import { api } from "../../../services/api"
+import { ModalSector } from "../ModalSector";
 import { Sectors } from "./styles";
 
-export function Manager({ store, store_name, isOpen }) {
-  const dispatch = useNotification()
+export function Manager({ store, store_name }) {
   const [inputYear, setInputYear] = useState("")
   const [consolidated, setConsolidated] = useState([])
+
+  const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
+  const [toSector, setToSector] = useState("")
+  const [sectors, setSectors] = useState([])
+
+  function handleOpenSectorModal() {
+    setIsSectorModalOpen(true)
+  }
+
+  function handleCloseSectorModal() {
+    setIsSectorModalOpen(false)
+  }
+
+  function handleSectorFiltering(sector) {
+    setToSector(sector)
+    
+    api.get("goals")
+    .then(response => {
+      let yearsSet = new Set()
+      let years = []
+
+      const allGoalsPerYear = response.data
+      
+      for (const goalData of allGoalsPerYear) {
+        if (
+          !yearsSet.has(goalData.year) && 
+          goalData.sector === sector && 
+          store === goalData.store
+        ) {
+          yearsSet.add(goalData.year)
+          years.push({
+            id: goalData.id,
+            year: goalData.year,
+            store: goalData.store,
+            sector: goalData.sector
+            })
+        }
+      }
+
+      setSectors(years)
+
+      handleOpenSectorModal()
+    })
+    .catch(error => console.log(error))
+  }
 
   function filtersConsolidatedBySector(consolidated) {
     const totalsBySectors = []
@@ -129,16 +173,15 @@ export function Manager({ store, store_name, isOpen }) {
                     </td>
                     <td>
                       <button
-                        onClick={() => isOpen(sector.sector)}
+                        onClick={() => handleSectorFiltering(sector.sector)}
                         type="button"
                       >
-                        <i className="uil uil-pen"></i>
+                        <i className="uil uil-search-alt"></i>
                       </button>
                     </td>
                   </tr>
                 )
               })
-            
             }
           </tbody>
         </table>
@@ -149,6 +192,13 @@ export function Manager({ store, store_name, isOpen }) {
           onChange={event => setInputYear(event.target.value)}
         />
       </div>
+
+      <ModalSector 
+        isOpen={isSectorModalOpen} 
+        onRequestClose={handleCloseSectorModal}
+        sector={toSector}
+        sectors={sectors}
+      />
     </Sectors>
   )
 }

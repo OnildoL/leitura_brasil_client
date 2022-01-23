@@ -9,7 +9,7 @@ export const Sectors = styled.section`
   gap: 1rem;
 
   div {
-    height: 20rem;
+    height: 24rem;
     background: var(--shape);
     padding: 2rem;
     border-radius: 0.25rem;

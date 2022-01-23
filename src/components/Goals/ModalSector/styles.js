@@ -5,7 +5,16 @@ export const Container = styled.section`
 `
 
 export const Content = styled.div`
-  
+  .button {
+    border: 0;
+    font-size: 1rem;
+    margin-right: 5px;
+    background: none;
+    
+    i {
+      color: var(--blue);
+    }
+  }
 `
 export const Summary = styled.div`
   display: grid;

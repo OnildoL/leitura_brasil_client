@@ -138,6 +138,7 @@ export function Goals() {
               Opções
             </h1>
             <button
+              className="button"
               onClick={handleOpenNewGoalModal}
               type="button"
             >
@@ -145,6 +146,7 @@ export function Goals() {
               Nova meta
             </button>
             <button
+              className="button"
               type="button"
             >
               <i className="uil uil-shopping-cart-alt table__icon"></i>
@@ -225,6 +227,7 @@ export function Goals() {
               <i className="uil uil-books"></i>
               <h3>livraria</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("livraria")}
                 type="button"
               >
@@ -236,6 +239,7 @@ export function Goals() {
               <i className="uil uil-book-open"></i>
               <h3>hq</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("hq")}
                 type="button"
               >
@@ -247,6 +251,7 @@ export function Goals() {
               <i className="uil uil-desktop"></i>
               <h3>informatica, games e midias</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("informatica")}
                 type="button"
               >
@@ -258,6 +263,7 @@ export function Goals() {
               <i className="uil uil-gift"></i>
               <h3>presentes</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("presentes")}
                 type="button"
               >
@@ -269,6 +275,7 @@ export function Goals() {
               <i className="uil uil-pen"></i>
               <h3>papelaria</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("papelaria")}
                 type="button"
               >
@@ -280,6 +287,7 @@ export function Goals() {
               <i className="uil uil-bell"></i>
               <h3>volta as aulas</h3>
               <button
+                className="button"
                 onClick={() => handleSectorFiltering("volta as aulas")}
                 type="button"
               >
@@ -298,13 +306,13 @@ export function Goals() {
           </Sectors>}
 
           {userCanSeeSelectStore && <SectorsManager>
-            <Manager store="31" store_name="leitura manaíra" isOpen={handleSectorFiltering} />
-            <Manager store="69" store_name="leitura mangabeira" isOpen={handleSectorFiltering} />
-            <Manager store="04" store_name="leitura tacaruna" isOpen={handleSectorFiltering} />
-            <Manager store="109" store_name="leitura riomar" isOpen={handleSectorFiltering} />
-            <Manager store="98" store_name="leitura recife" isOpen={handleSectorFiltering} />
-            <Manager store="108" store_name="leitura caruaru" isOpen={handleSectorFiltering} />
-            <Manager store="76" store_name="leitura campina grande" isOpen={handleSectorFiltering} />
+            <Manager store="31" store_name="leitura manaíra" />
+            <Manager store="69" store_name="leitura mangabeira" />
+            <Manager store="04" store_name="leitura tacaruna" />
+            <Manager store="109" store_name="leitura riomar" />
+            <Manager store="98" store_name="leitura recife" />
+            <Manager store="108" store_name="leitura caruaru" />
+            <Manager store="76" store_name="leitura campina grande" />
           </SectorsManager>}
 
         </Content>
