@@ -1,3 +1,5 @@
+import { UilApps } from '@iconscout/react-unicons'
+import { UilBookOpen } from "@iconscout/react-unicons"
 import { Container, Content } from "./styles"
 import { Link } from "react-router-dom"
 import { AuthContext, signOut } from "../../contexts/AuthContext"
@@ -19,7 +21,7 @@ export function Header() {
           <div className="panel_logo_user">
             <Link to="/main">
                 <div className="logo">
-                  <i className="uil uil-book-open table__icon"></i>
+                  <i className="table__icon"><UilBookOpen size="20" /></i>
                   leitura
                 </div>
             </Link>
@@ -70,7 +72,7 @@ export function Header() {
             </li>
 
             <li>
-              <i className="uil uil-apps"></i>
+              <i><UilApps size="13" /></i>
               <ul>
                 <Link to="#"> {/* /profiles */}
                   perfil

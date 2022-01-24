@@ -1,5 +1,18 @@
 import Modal from "react-modal"
-import { useContext, useState } from "react"
+import { 
+  UilSetting, 
+  UilApps, 
+  UilTrophy, 
+  UilShoppingCartAlt, 
+  UilBooks,
+  UilBookOpen,
+  UilArrowRight,
+  UilDesktop,
+  UilGift,
+  UilPen,
+  UilBell
+} from '@iconscout/react-unicons'
+import { useContext, useState, useCallback } from "react"
 import { Header } from "../Header"
 import { Footer } from "../Footer"
 
@@ -7,6 +20,7 @@ import closeImg from "../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer, Sectors, SectorsManager } from "./styles"
 
+import { currency, currencyValue } from "../../utils/masks"
 import { useWithSSRAuth } from "../../utils/withSSRAuth"
 import { api } from "../../services/api"
 import { useNotification } from "../../hooks/useNotification"
@@ -21,6 +35,10 @@ export function Goals() {
 
   const dispatch = useNotification()
 
+  const handleKeyUp = useCallback((e) => {
+    currency(e)
+  }, [])
+
   const { userCanSeeAdmin, userCanSeeSelectStore, userCanSeeDev } = usePermission()
 
   const [selectedStore, setSelectedStore] = useState("")
@@ -31,6 +49,12 @@ export function Goals() {
   const [month, setMonth] = useState("")
   const [store, setStore] = useState("")
 
+  const [provider, setProvider] = useState("")
+  const [monthRequest, setMonthRequest] = useState("")
+  const [requestValue, setRequestValue] = useState("")
+  const [storeRequest, setStoreRequest] = useState("")
+
+  const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
   const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false)
   const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
 
@@ -48,6 +72,14 @@ export function Goals() {
 
   function handleCloseNewGoalModal() {
     setIsNewGoalModalOpen(false)
+  }
+
+  function handleOpenNewRequestModal() {
+    setIsNewRequestModalOpen(true)
+  }
+
+  function handleCloseNewRequestModal() {
+    setIsNewRequestModalOpen(false)
   }
 
   const [sectors, setSectors] = useState([])
@@ -91,7 +123,7 @@ export function Goals() {
 
     const data = { 
       sector, 
-      goal, 
+      goal: currencyValue(goal), 
       year: new Date().getFullYear(), 
       month, 
       store: !store ? user.store : store
@@ -119,6 +151,39 @@ export function Goals() {
     handleCloseNewGoalModal()
   }
 
+  async function handleCreateNewRequest(event) {
+    event.preventDefault()
+
+    const data = { 
+      provider,
+      month: monthRequest,
+      year: new Date().getFullYear(), 
+      request_value: currencyValue(requestValue), 
+      store: !storeRequest ? user.store : storeRequest
+    }
+    console.log(data)
+    // api.post("requests", data)
+    //   .then(response => {
+    //     dispatch({
+    //       type: "success",
+    //       message: `Pedido cadastrado!`,
+    //     })
+    //   })
+    //   .catch(error => {
+    //     dispatch({
+    //       type: "error",
+    //       message: error.response.data.message,
+    //     })
+    //   })
+
+    // setProvider("")
+    // setMonthRequest("")
+    // setRequestValue("")
+    // setStoreRequest("")
+    
+    // handleCloseNewRequestModal()
+  }
+
   return (
     <>
       <Header />
@@ -126,7 +191,7 @@ export function Goals() {
         <Content>
           <section>
             <h1>
-              <i className="uil uil-apps table__icon"></i>
+              <i className="table__icon"><UilApps size="16" /></i>
               Setores
             </h1>
             <p>Listagem de todas as metas e pedidos.</p>
@@ -134,22 +199,23 @@ export function Goals() {
 
           {userCanSeeAdmin && <section className="panel">
             <h1>
-              <i className="uil uil-setting table__icon"></i>
+              <i className="table__icon"><UilSetting size="16" /></i>
               Opções
             </h1>
             <button
               className="button"
               onClick={handleOpenNewGoalModal}
               type="button"
-            >
-              <i className="uil uil-trophy table__icon"></i>
+              >
+              <i className="table__icon"><UilTrophy size="16"/></i>
               Nova meta
             </button>
             <button
               className="button"
+              onClick={handleOpenNewRequestModal}
               type="button"
             >
-              <i className="uil uil-shopping-cart-alt table__icon"></i>
+              <i className="table__icon"><UilShoppingCartAlt size="16"/></i>
               Novo pedido
             </button>
 
@@ -183,7 +249,7 @@ export function Goals() {
                 <input
                   type="text"
                   placeholder="Meta"
-                  value={goal}
+                  onKeyUp={handleKeyUp}
                   onChange={event => setGoal(event.target.value)}
                   required
                 />
@@ -220,11 +286,59 @@ export function Goals() {
                 </button>
               </FormContainer>
             </Modal>
+            <Modal
+              isOpen={isNewRequestModalOpen}
+              onRequestClose={handleCloseNewRequestModal}
+              overlayClassName="react-modal-overlay"
+              className="react-modal-content"
+            >
+              <button 
+                type="button" 
+                onClick={handleCloseNewRequestModal} 
+                className="react-modal-close"
+              >
+                <img src={closeImg} alt="Fechar modal" />
+              </button>
+
+              <FormContainer onSubmit={handleCreateNewRequest}>
+                <h2>Cadastrar pedido</h2>
+
+                <input
+                  type="text"
+                  placeholder="Fornecedor"
+                  onChange={event => setProvider(event.target.value)}
+                  required
+                />
+
+                <input
+                  type="text"
+                  onKeyUp={handleKeyUp}
+                  onChange={event => setRequestValue(event.target.value)}
+                  placeholder="Valor do pedido"
+                  required
+                />
+
+                {userCanSeeDev && <select value={storeRequest} onChange={event => setStoreRequest(event.target.value)} required>
+                  <option value="">-- Escolher loja --</option>
+                  <option value="31">Leitura Manaíra</option>
+                  <option value="69">Leitura Mangabeira</option>
+                  <option value="04">Leitura Tacaruna</option>
+                  <option value="109">Leitura Riomar</option>
+                  <option value="98">Leitura Recife</option>
+                  <option value="108">Leitura Caruaru</option>
+                  <option value="76">Leitura Campina Grande</option>
+                </select>}
+
+                <button type="submit">
+                  Cadastrar
+                </button>
+              </FormContainer>
+            </Modal>
           </section>}
 
           {!userCanSeeSelectStore && <Sectors>
             <div>
-              <i className="uil uil-books"></i>
+              <i><UilBooks /></i>
               <h3>livraria</h3>
               <button
                 className="button"
@@ -232,11 +346,11 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
             <div>
-              <i className="uil uil-book-open"></i>
+              <i><UilBookOpen /></i>
               <h3>hq</h3>
               <button
                 className="button"
@@ -244,11 +358,11 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
             <div>
-              <i className="uil uil-desktop"></i>
+              <i><UilDesktop /></i>
               <h3>informatica, games e midias</h3>
               <button
                 className="button"
@@ -256,11 +370,11 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
             <div>
-              <i className="uil uil-gift"></i>
+              <i><UilGift /></i>
               <h3>presentes</h3>
               <button
                 className="button"
@@ -268,11 +382,11 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
             <div>
-              <i className="uil uil-pen"></i>
+              <i><UilPen /></i>
               <h3>papelaria</h3>
               <button
                 className="button"
@@ -280,11 +394,11 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
             <div>
-              <i className="uil uil-bell"></i>
+              <i><UilBell /></i>
               <h3>volta as aulas</h3>
               <button
                 className="button"
@@ -292,7 +406,7 @@ export function Goals() {
                 type="button"
               >
                 Visualizar
-                <i className="uil uil-arrow-right"></i>
+                <i><UilArrowRight size="16"/></i>
               </button>
             </div>
 

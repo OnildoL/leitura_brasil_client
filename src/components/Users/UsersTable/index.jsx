@@ -1,20 +1,16 @@
 import Modal from "react-modal"
+import { UilPen } from '@iconscout/react-unicons'
 import { api } from "../../../services/api"
 import { useEffect, useState } from "react"
 
 import closeImg from "../../../assets/Img/close.svg"
+
 import { Container, Content, FormContainer } from "./styles"
 import { useNotification } from "../../../hooks/useNotification"
 
 export function Table() {
   const [users, setUsers] = useState([])
   const dispatch = useNotification()
-
-  useEffect(() => {
-    api.get("users")
-      .then(response => setUsers(response.data))
-      .catch(error => console.log(error))
-  }, [])
 
   const [isOpenModalUserEdition, setIsOpenModalUserEdition] = useState(false)
 
@@ -80,6 +76,12 @@ export function Table() {
     handleCloseUserEditionModal()
   }
 
+  useEffect(() => {
+    api.get("users")
+      .then(response => setUsers(response.data))
+      .catch(error => console.log(error))
+  }, [])
+
   return (
     <Container>
       <Content>
@@ -123,7 +125,7 @@ export function Table() {
                       onClick={() => handleUserSelect(user.user)}
                         type="button"
                       >
-                        <i className="uil uil-pen"></i>
+                        <i><UilPen size="16"/></i>
                       </button>
                     </td>
                   </tr>

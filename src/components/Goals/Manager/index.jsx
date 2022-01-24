@@ -1,3 +1,4 @@
+import { UilSearchAlt } from '@iconscout/react-unicons'
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { api } from "../../../services/api"
@@ -176,7 +177,7 @@ export function Manager({ store, store_name }) {
                         onClick={() => handleSectorFiltering(sector.sector)}
                         type="button"
                       >
-                        <i className="uil uil-search-alt"></i>
+                        <i><UilSearchAlt size="16"/></i>
                       </button>
                     </td>
                   </tr>

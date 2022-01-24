@@ -1,4 +1,5 @@
 import Modal from "react-modal"
+import { UilSearchAlt, UilTrashAlt, UilPen, UilUsdCircle } from '@iconscout/react-unicons'
 import { useState } from "react"
 
 import closeImg from "../../../assets/Img/close.svg"
@@ -10,6 +11,7 @@ import { v4 } from "uuid"
 export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const [requestsAndNotes, SetRequestsAndNotes] = useState([])
   const [sectorTotalPerMonth, setSectorTotalPerMonth] = useState([])
+  const [consolidation, setConsolidation] = useState({})
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false)
   
   const [totalSectorGoal, setTotalSectorGoal] = useState(0)
@@ -75,7 +77,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
         })
       }
     }
-    console.log(requestNotes)
+    
     SetRequestsAndNotes(requestNotes)
   }
 
@@ -83,6 +85,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     api.get(`/goals/consolidated/${year}/${store}`)
       .then(response => {
         filtersConsolidatedBySector({ response, sector })
+      })
+      .catch(error => console.log(error))
+
+    api.get(`/goals/consolidation/${year}/${store}`)
+      .then(response => {
+        setConsolidation(response.data)
       })
       .catch(error => console.log(error))
 
@@ -141,7 +149,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                         })}
                         type="button"
                       >
-                        <i className="uil uil-search-alt"></i>
+                        <i><UilSearchAlt size="16"/></i>
                       </button>
                     </td>
                   </tr>
@@ -222,7 +230,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                             className="button"
                             type="button"
                           >
-                            <i className="uil uil-pen"></i>
+                            <i><UilPen size="16"/></i>
                           </button>
                         </td>
                       </tr>
@@ -235,7 +243,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               <div>
                 <header>
                   <p>Total metas</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
@@ -249,7 +257,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               <div>
                 <header>
                   <p>Total pedidos</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
@@ -263,7 +271,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               <div>
                 <header>
                   <p>Total entradas</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
@@ -288,12 +296,45 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>FEV</th>
-                  <th>R$ 278.000,00</th>
-                  <th>R$ 278.000,00</th>
-                  <th>R$ 278.000,00</th>
-                </tr>
+                {
+                  consolidation.consolidated?.map(month => {
+                    return (
+                      <tr key={month.id}>
+                        <td>{month.month}</td>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              minimumFractionDigits: 0, 
+                              maximumFractionDigits: 0, 
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(month.goal ?? 0)
+                          } 
+                        </td>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              minimumFractionDigits: 0, 
+                              maximumFractionDigits: 0, 
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(month.request ?? 0)
+                          } 
+                        </td>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              minimumFractionDigits: 0, 
+                              maximumFractionDigits: 0, 
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(month.note ?? 0)
+                          } 
+                        </td>
+                      </tr>
+                    )
+                  })
+                }
               </tbody>
             </table>
 
@@ -301,37 +342,43 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               <div>
                 <header>
                   <p>Total metas</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 0, 
                     style: 'currency',
                     currency: 'BRL'
-                  }).format(1000000)}
+                  }).format(consolidation.totals?.goal)}
                 </strong>
               </div>
               <div>
                 <header>
                   <p>Total pedidos</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 0, 
                     style: 'currency',
                     currency: 'BRL'
-                  }).format(1000000)}
+                  }).format(consolidation.totals?.request)}
                 </strong>
               </div>
               <div>
                 <header>
                   <p>Total entradas</p>
-                  <i class="uil uil-usd-circle"></i>
+                  <i><UilUsdCircle /></i>
                 </header>
                 <strong>
                   {new Intl.NumberFormat('pt-BR', {
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 0, 
                     style: 'currency',
                     currency: 'BRL'
-                  }).format(1000000)}
+                  }).format(consolidation.totals?.input)}
                 </strong>
               </div>
             </Summary>
@@ -376,19 +423,26 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                           }  
                         </td>
                         <td>{request_note.nf}</td>
-                        <td>{request_note.issue}</td>
+                        <td>
+                          {
+                            new Intl.DateTimeFormat('pt-BR', { 
+                              dateStyle: "short", 
+                            }).format(new Date(request_note.issue))
+                            
+                          }
+                        </td>
                         <td>
                           <button
                             className="button"
                             type="button"
                           >
-                            <i className="uil uil-search-alt"></i>
+                            <i><UilSearchAlt size="16"/></i>
                           </button>
                           <button
                             className="button"
                             type="button"
                           >
-                            <i className="uil uil-trash-alt"></i>
+                            <i><UilTrashAlt size="16" /></i>
                           </button>
                         </td>
                       </tr>

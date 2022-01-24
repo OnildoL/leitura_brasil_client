@@ -1,4 +1,3 @@
-import closeImg from '../../../assets/Img/close.svg'
 import { useEffect, useState } from "react"
 
 export function Notification(props) {

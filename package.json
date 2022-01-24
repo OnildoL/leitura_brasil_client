@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@iconscout/react-unicons": "^1.1.6",
     "axios": "^0.24.0",
     "nookies": "^2.5.2",
     "react": "^17.0.2",

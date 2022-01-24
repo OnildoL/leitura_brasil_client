@@ -5,7 +5,6 @@ import { Goals } from "./components/Goals"
 import { Users } from "./components/Users"
 import { Table } from "./components/Users/UsersTable"
 import { Login } from "./components/Login"
-import { AuthProvider } from "./contexts/AuthContext"
 
 export function App() {
   return (

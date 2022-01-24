@@ -1,4 +1,5 @@
 import Modal from "react-modal"
+import { UilUsersAlt, UilSetting } from '@iconscout/react-unicons'
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -85,7 +86,7 @@ export function Users() {
         <Content>
           <section>
             <h1>
-              <i className="uil uil-users-alt table__icon"></i>
+              <i><UilUsersAlt className="table__icon" size="16" /></i>
               Usuários
             </h1>
             <p>Cadastro de usuários.</p>
@@ -93,7 +94,7 @@ export function Users() {
 
           <section className="panel">
             <h1>
-              <i className="uil uil-setting table__icon"></i>
+              <i className="table__icon"><UilSetting size="16" /></i>
               Opções
             </h1>
 
@@ -101,7 +102,7 @@ export function Users() {
               onClick={handleOpenNewUserModal}
               type="button"
             >
-              <i className="uil uil-user table__icon"></i>
+              <i><UilUsersAlt className="table__icon" size="16" /></i>
               Novo usuário
             </button>}
 

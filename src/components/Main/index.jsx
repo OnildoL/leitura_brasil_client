@@ -1,3 +1,5 @@
+import { UilBookOpen } from '@iconscout/react-unicons'
+
 import { useWithSSRAuth } from "../../utils/withSSRAuth"
 import { Header } from "../Header"
 import { Footer } from "../Footer"
@@ -12,7 +14,7 @@ export function Main() {
       <Container>
         <Content>
           <p>
-            <i className="uil uil-book-open"></i>
+            <i><UilBookOpen size="50" /></i>
             leitura brasil
           </p>
           <span>
