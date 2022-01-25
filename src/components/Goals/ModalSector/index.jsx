@@ -1,6 +1,7 @@
 import Modal from "react-modal"
+import { CSVLink } from "react-csv"
 import { v4 } from "uuid"
-import { UilSearchAlt, UilTrashAlt, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
+import { UilSearchAlt, UilExport, UilTrashAlt, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
 import { Container, Content, FormContainer, Summary } from "./styles"
@@ -8,6 +9,17 @@ import { api } from "../../../services/api"
 import { currency, currencyValue } from "../../../utils/masks"
 import { AuthContext } from "../../../contexts/AuthContext"
 import { useNotification } from "../../../hooks/useNotification"
+import { usePermission } from "../../../hooks/usePermission"
+
+const headers_requests = [
+  { label: "Ano", key: "year" },
+  { label: "Mês", key: "request_month" },
+  { label: "Fornecedor", key: "request_provider" },
+  { label: "Valor Pedido", key: "request_value" },
+  { label: "Valor Nota", key: "note_value" },
+  { label: "Nota Fiscal", key: "nf" },
+  { label: "Emissão", key: "issue" },
+]
 
 export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const { user } = useContext(AuthContext)
@@ -15,6 +27,8 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const handleKeyUp = useCallback((e) => {
     currency(e)
   }, [])
+
+  const { userCanSeeAdmin } = usePermission()
 
   const [order, setOrder] = useState("ASC")
 
@@ -167,6 +181,10 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     handleOpenGoalsModal({ year, sector, store: user.store })
   }
 
+  function updateGoal(id) {
+    alert(id)
+  }
+
   const monthNumber = [
     {monthNumber: 1, FEV: 1, month: "FEV"}, 
     {monthNumber: 2, MAR: 2, month: "MAR"}, 
@@ -233,6 +251,14 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       SetRequestsAndNotes(sorted)
       setOrder("ASC")
     }
+  }
+
+
+  const csvReportRequests = {
+    filename: `${Date.now()}.csv`,
+    headers: headers_requests,
+    data: requestsAndNotes,
+    separator: ";"
   }
 
   return (
@@ -304,7 +330,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
 
         <Container>
           <Content>
-            {sectors[0]?.store === user?.store && <button
+            {sectors[0]?.store === user?.store && userCanSeeAdmin && <button
               className="button"
               onClick={handleOpenNewRequestModal}
               type="button"
@@ -364,6 +390,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                         <td>
                           <button
                             className="button_icon"
+                            onClick={() => updateGoal(sector.id)}
                             type="button"
                           >
                             <i><UilPen size="16"/></i>
@@ -524,6 +551,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
             
             <table>
               <thead>
+                <tr>
+                  <CSVLink {...csvReportRequests}>
+                    <UilExport />
+                    Exportar CSV
+                  </CSVLink>
+                </tr>
                 <tr>
                   <th onClick={() => sortingString("request_provider")}>Fornecedor</th>
                   <th onClick={() => sortingMonth("request_month")}>Mês</th>

@@ -5,6 +5,11 @@ export const Container = styled.section`
 `
 
 export const Content = styled.div`
+  .button_export {
+    display: flex;
+    width: 150px;
+    border-radius: 0.25rem;
+  }
   .button {
     margin: 20px 5px 0;
     font-size: 1rem;
