@@ -3,7 +3,6 @@ import {
   UilSetting, 
   UilApps, 
   UilTrophy, 
-  UilShoppingCartAlt, 
   UilBooks,
   UilBookOpen,
   UilArrowRight,
@@ -49,12 +48,6 @@ export function Goals() {
   const [month, setMonth] = useState("")
   const [store, setStore] = useState("")
 
-  const [provider, setProvider] = useState("")
-  const [monthRequest, setMonthRequest] = useState("")
-  const [requestValue, setRequestValue] = useState("")
-  const [storeRequest, setStoreRequest] = useState("")
-
-  const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
   const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false)
   const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
 
@@ -72,14 +65,6 @@ export function Goals() {
 
   function handleCloseNewGoalModal() {
     setIsNewGoalModalOpen(false)
-  }
-
-  function handleOpenNewRequestModal() {
-    setIsNewRequestModalOpen(true)
-  }
-
-  function handleCloseNewRequestModal() {
-    setIsNewRequestModalOpen(false)
   }
 
   const [sectors, setSectors] = useState([])
@@ -151,39 +136,6 @@ export function Goals() {
     handleCloseNewGoalModal()
   }
 
-  async function handleCreateNewRequest(event) {
-    event.preventDefault()
-
-    const data = { 
-      provider,
-      month: monthRequest,
-      year: new Date().getFullYear(), 
-      request_value: currencyValue(requestValue), 
-      store: !storeRequest ? user.store : storeRequest
-    }
-    console.log(data)
-    // api.post("requests", data)
-    //   .then(response => {
-    //     dispatch({
-    //       type: "success",
-    //       message: `Pedido cadastrado!`,
-    //     })
-    //   })
-    //   .catch(error => {
-    //     dispatch({
-    //       type: "error",
-    //       message: error.response.data.message,
-    //     })
-    //   })
-
-    // setProvider("")
-    // setMonthRequest("")
-    // setRequestValue("")
-    // setStoreRequest("")
-    
-    // handleCloseNewRequestModal()
-  }
-
   return (
     <>
       <Header />
@@ -209,14 +161,6 @@ export function Goals() {
               >
               <i className="table__icon"><UilTrophy size="16"/></i>
               Nova meta
-            </button>
-            <button
-              className="button"
-              onClick={handleOpenNewRequestModal}
-              type="button"
-            >
-              <i className="table__icon"><UilShoppingCartAlt size="16"/></i>
-              Novo pedido
             </button>
 
             <Modal
@@ -271,54 +215,6 @@ export function Goals() {
                 </select>
   
                 {userCanSeeDev && <select value={store} onChange={event => setStore(event.target.value)} required>
-                  <option value="">-- Escolher loja --</option>
-                  <option value="31">Leitura Manaíra</option>
-                  <option value="69">Leitura Mangabeira</option>
-                  <option value="04">Leitura Tacaruna</option>
-                  <option value="109">Leitura Riomar</option>
-                  <option value="98">Leitura Recife</option>
-                  <option value="108">Leitura Caruaru</option>
-                  <option value="76">Leitura Campina Grande</option>
-                </select>}
-
-                <button type="submit">
-                  Cadastrar
-                </button>
-              </FormContainer>
-            </Modal>
-            <Modal
-              isOpen={isNewRequestModalOpen}
-              onRequestClose={handleCloseNewRequestModal}
-              overlayClassName="react-modal-overlay"
-              className="react-modal-content"
-            >
-              <button 
-                type="button" 
-                onClick={handleCloseNewRequestModal} 
-                className="react-modal-close"
-              >
-                <img src={closeImg} alt="Fechar modal" />
-              </button>
-
-              <FormContainer onSubmit={handleCreateNewRequest}>
-                <h2>Cadastrar pedido</h2>
-
-                <input
-                  type="text"
-                  placeholder="Fornecedor"
-                  onChange={event => setProvider(event.target.value)}
-                  required
-                />
-
-                <input
-                  type="text"
-                  onKeyUp={handleKeyUp}
-                  onChange={event => setRequestValue(event.target.value)}
-                  placeholder="Valor do pedido"
-                  required
-                />
-
-                {userCanSeeDev && <select value={storeRequest} onChange={event => setStoreRequest(event.target.value)} required>
                   <option value="">-- Escolher loja --</option>
                   <option value="31">Leitura Manaíra</option>
                   <option value="69">Leitura Mangabeira</option>

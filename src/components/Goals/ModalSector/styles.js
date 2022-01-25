@@ -6,6 +6,22 @@ export const Container = styled.section`
 
 export const Content = styled.div`
   .button {
+    margin: 20px 5px 0;
+    font-size: 1rem;
+    color: #FFFFFF;
+    background: var(--blue);
+    border: 0;
+    padding:0 2rem;
+    border-radius: 0.25rem;
+    height: 3rem;
+
+    transition: 0.4s;
+
+    &:hover {
+      background: var(--blue-light);
+    }
+  }
+  .button_icon {
     border: 0;
     font-size: 1rem;
     margin-right: 5px;
@@ -46,4 +62,55 @@ export const Summary = styled.div`
     i {
       font-size: 1.5rem;
     }
+`
+
+export const FormContainer = styled.form`
+  h2 {
+    color: var(--text-title);
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  select, input {
+    width: 100%;
+    padding: 0 1.5rem;
+    height: 4rem;
+    border-radius: 0.25rem;
+
+    border: 1px solid #D7D7D7;
+    background: #E7E9EE;
+
+    font-weight: 400;
+    font-size: 1rem;
+
+    &::placeholder {
+      color: var(--text-body);
+    }
+
+    & + input {
+      margin-top: 1rem;
+    }
+    & + select {
+      margin-top: 1rem;
+    }
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 0 1.5rem;
+    height: 4rem;
+    background: var(--blue);
+    color: #FFF;
+    border-radius: 0.25rem;
+    border: 0;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    font-weight: 600;
+
+    transition: 0.3s;
+
+    &:hover {
+      background: var(--blue-light);
+    }
+  }
 `
