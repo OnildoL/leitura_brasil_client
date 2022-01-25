@@ -145,16 +145,14 @@ export const GlobalStyle = createGlobalStyle`
         padding: 1rem 1rem;
         text-align: left;
         line-height: 1.5rem;
+        cursor: pointer;
       }
 
       td {
-        padding: 1rem 1rem;
-        border: 0;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
         color: var(--text-body);
-
-        &:first-child {
-          color: var(--text-title)
-        }
       }
     }
   }

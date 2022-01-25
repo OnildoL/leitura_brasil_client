@@ -194,6 +194,7 @@ export function Goals() {
                   type="text"
                   placeholder="Meta"
                   onKeyUp={handleKeyUp}
+                  maxLength={11}
                   onChange={event => setGoal(event.target.value)}
                   required
                 />

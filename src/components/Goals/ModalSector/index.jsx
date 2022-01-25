@@ -1,12 +1,10 @@
 import Modal from "react-modal"
+import { v4 } from "uuid"
 import { UilSearchAlt, UilTrashAlt, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
-
 import closeImg from "../../../assets/Img/close.svg"
-
 import { Container, Content, FormContainer, Summary } from "./styles"
 import { api } from "../../../services/api"
-import { v4 } from "uuid"
 import { currency, currencyValue } from "../../../utils/masks"
 import { AuthContext } from "../../../contexts/AuthContext"
 import { useNotification } from "../../../hooks/useNotification"
@@ -18,8 +16,9 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     currency(e)
   }, [])
 
-  const [goalsIdPerMonth, setGoalsIdPerMonth] = useState([])
+  const [order, setOrder] = useState("ASC")
 
+  const [goalsIdPerMonth, setGoalsIdPerMonth] = useState([])
   const [requestsAndNotes, SetRequestsAndNotes] = useState([])
   const [sectorTotalPerMonth, setSectorTotalPerMonth] = useState([])
   const [consolidation, setConsolidation] = useState({})
@@ -79,7 +78,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     setSectorTotalPerMonth(totalSector)
   }
 
-  function listRequestsAndNotes({ response }) {
+  function listRequestsAndNotes(response) {
     const requestNotes = []
     for (const request_note of response.data) {
       for (const request of request_note.requests) {
@@ -110,9 +109,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       .catch(error => console.log(error))
 
     api.get(`/goals/consolidated/${year}/${store}/${sector}`)
-      .then(response => {
-        listRequestsAndNotes({ response })
-      })
+      .then(response => listRequestsAndNotes(response))
       .catch(error => console.log(error))
 
     api.get(`requests/${year}/${sector}/${store}/`)
@@ -134,7 +131,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     setIsNewRequestModalOpen(false)
   }
 
-  async function handleCreateNewRequest(event) {
+  function handleCreateNewRequest(event) {
     event.preventDefault()
     const { id, month, year } = goalsIdPerMonth.find(goal => goal.id === Number(monthRequest))
 
@@ -168,6 +165,74 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     handleCloseNewRequestModal()
     handleCloseGoalsModal()
     handleOpenGoalsModal({ year, sector, store: user.store })
+  }
+
+  const monthNumber = [
+    {monthNumber: 1, FEV: 1, month: "FEV"}, 
+    {monthNumber: 2, MAR: 2, month: "MAR"}, 
+    {monthNumber: 3, ABR: 3, month: "ABR"}, 
+    {monthNumber: 4, MAI: 4, month: "MAI"}, 
+    {monthNumber: 5, JUN: 5, month: "JUN"}, 
+    {monthNumber: 6, JUL: 6, month: "JUL"}, 
+    {monthNumber: 7, AGO: 7, month: "AGO"}, 
+    {monthNumber: 8, SET: 8, month: "SET"}, 
+    {monthNumber: 9, OUT: 9, month: "OUT"}, 
+    {monthNumber: 10, NOV: 10, month: "NOV"}, 
+    {monthNumber: 11, DEZ: 11, month: "DEZ"}, 
+    {monthNumber: 12, JAN: 12, month: "JAN"}
+  ]
+  const findNumberMonth = (months, mth) => months.find(month => month.month === mth)
+  const sortingString = (col) => {
+    if (order === "ASC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => 
+        a[col].toLowerCase() > b[col].toLowerCase() ? 1 : -1
+      )
+      SetRequestsAndNotes(sorted)
+      setOrder("DSC")
+    }
+    if (order === "DSC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => 
+        a[col].toLowerCase() < b[col].toLowerCase() ? 1 : -1
+      )
+      SetRequestsAndNotes(sorted)
+      setOrder("ASC")
+    }
+  }
+  const sortingMonth = (col) => {
+    if (order === "ASC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => {
+        const a_month = findNumberMonth(monthNumber, a[col])
+        const b_month = findNumberMonth(monthNumber, b[col])
+        return a_month.monthNumber > b_month.monthNumber ? 1 : -1
+      })
+      SetRequestsAndNotes(sorted)
+      setOrder("DSC")
+    }
+    if (order === "DSC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => { 
+        const a_month = findNumberMonth(monthNumber, a[col])
+        const b_month = findNumberMonth(monthNumber, b[col])
+        return a_month.monthNumber < b_month.monthNumber ? 1 : -1
+      })
+      SetRequestsAndNotes(sorted)
+      setOrder("ASC")
+    }
+  }
+  const sortingNumber = (col) => {
+    if (order === "ASC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => 
+        Number(a[col]) > Number(b[col]) ? 1 : -1
+      )
+      SetRequestsAndNotes(sorted)
+      setOrder("DSC")
+    }
+    if (order === "DSC") {
+      const sorted = [...requestsAndNotes].sort((a, b) => 
+        Number(a[col]) < Number(b[col]) ? 1 : -1
+      )
+      SetRequestsAndNotes(sorted)
+      setOrder("ASC")
+    }
   }
 
   return (
@@ -310,6 +375,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 }
               </tbody>
             </table>
+
             <Summary>
               <div>
                 <header>
@@ -453,18 +519,17 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 </strong>
               </div>
             </Summary>
-
+            
             <h2>PEDIDOS {sector?.toUpperCase()}</h2>
             
-            <table id="table-notes">
+            <table>
               <thead>
                 <tr>
-                  <th>Referência</th>
-                  <th>Fornecedor</th>
-                  <th>Mês</th>
-                  <th>Valor Pedido</th>
-                  <th>Valor Nota</th>
-                  <th>Número</th>
+                  <th onClick={() => sortingString("request_provider")}>Fornecedor</th>
+                  <th onClick={() => sortingMonth("request_month")}>Mês</th>
+                  <th onClick={() => sortingNumber("request_value")}>Valor Pedido</th>
+                  <th onClick={() => sortingNumber("note_value")}>Valor Nota</th>
+                  <th onClick={() => sortingNumber("nf")}>Número</th>
                   <th>Emissão</th>
                   <th>Ações</th>
                 </tr>
@@ -474,8 +539,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                   requestsAndNotes.map(request_note => {
                     return (
                       <tr key={request_note.id}>
-                        <td>{request_note.year}</td>
-                        <td>{request_note.request_provider}</td>
+                        <td>{request_note.request_provider.toUpperCase()}</td>
                         <td>{request_note.request_month}</td>
                         <td>
                           {
@@ -544,6 +608,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
           <input
             type="text"
             placeholder="Fornecedor"
+            maxLength={20}
             onChange={event => setProvider(event.target.value)}
             required
           />
@@ -551,6 +616,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
           <input
             type="text"
             onKeyUp={handleKeyUp}
+            maxLength={10}
             onChange={event => setRequestValue(event.target.value)}
             placeholder="Valor do pedido"
             required

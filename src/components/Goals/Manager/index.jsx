@@ -190,6 +190,7 @@ export function Manager({ store, store_name }) {
         <input 
           type="text" 
           placeholder="Escolher ano"
+          maxLength={4}
           onChange={event => setInputYear(event.target.value)}
         />
       </div>
