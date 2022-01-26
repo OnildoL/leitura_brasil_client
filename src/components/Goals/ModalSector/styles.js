@@ -5,6 +5,53 @@ export const Container = styled.section`
 `
 
 export const Content = styled.div`
+  .search {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 1rem 0 1rem;
+
+    button {
+      width: 100%;
+      margin: 1rem 0 0;
+      height: 2rem;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: var(--blue);
+      border: 0;
+      border-radius: 0.25rem;
+
+      transition: 0.4s;
+
+      &:hover {
+        background: var(--blue-light);
+      }
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0 1.5rem;
+      height: 2rem;
+      border-radius: 0.25rem;
+  
+      border: 1px solid #D7D7D7;
+      background: #E7E9EE;
+  
+      font-weight: 400;
+      font-size: 1rem;
+  
+      &::placeholder {
+        color: var(--text-body);
+      }
+  
+      & + input {
+        margin-top: 1rem;
+      }
+      & + select {
+        margin-top: 1rem;
+      }
+    }
+  }
   .button_export {
     display: flex;
     width: 150px;

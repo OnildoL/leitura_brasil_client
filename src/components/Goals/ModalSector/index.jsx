@@ -38,7 +38,11 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const [consolidation, setConsolidation] = useState({})
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false)
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
+  const [isUpdateGoalModalOpen, setIsUpdateGoalModalOpen] = useState(false)
   
+  const [updateGoal,setUpdateGoal] = useState("")
+  const [idGoal,setIdGoal] = useState("")
+
   const [provider, setProvider] = useState("")
   const [monthRequest, setMonthRequest] = useState("")
   const [requestValue, setRequestValue] = useState("")
@@ -46,144 +50,6 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const [totalSectorGoal, setTotalSectorGoal] = useState(0)
   const [totalSectorRequest, setTotalSectorRequest] = useState(0)
   const [totalSectorInput, setTotalSectorInput] = useState(0)
-
-  function filtersConsolidatedBySector({ response, sector }) {
-    const totalSector = []
-    const sectors = [sector]
-    
-    for (const sector of sectors) {
-      const result = response.data.filter(data => data.sector === sector)
-
-      for (const goal_month of result) {
-        const { goal, id } = goal_month
-
-        const { request } = goal_month.requests.reduce((accumulator, { request_value }) => {
-        accumulator.request = accumulator.request + Number(request_value) || Number(request_value)
-        return accumulator
-        }, {})
-
-        const { note } = goal_month.notes.reduce((accumulator, { note_value }) => {
-        accumulator.note = accumulator.note + Number(note_value) || Number(note_value)
-        return accumulator
-        }, {})
-
-        totalSector.push({
-          id,
-          goal,
-          sector: sector,
-          month: goal_month.month,
-          request: request ?? 0,
-          input: note ?? 0
-        })
-      }
-
-      const { goal, request, input } = totalSector.reduce((accumulator, { goal, request, input }) => {
-        accumulator.goal = accumulator.goal + Number(goal) || Number(goal)
-        accumulator.request = accumulator.request + request || request
-        accumulator.input = accumulator.input + input || input
-
-        return accumulator
-      }, {})
-
-      setTotalSectorGoal(goal)
-      setTotalSectorRequest(request)
-      setTotalSectorInput(input)
-    }
-    setSectorTotalPerMonth(totalSector)
-  }
-
-  function listRequestsAndNotes(response) {
-    const requestNotes = []
-    for (const request_note of response.data) {
-      for (const request of request_note.requests) {
-        const note = request_note.notes.find(note => note.requests_inputs_id === request.request_id)
-        requestNotes.push({
-          id: v4(),
-          year: request_note.year,
-          ...request,
-          ...note
-        })
-      }
-    }
-    
-    SetRequestsAndNotes(requestNotes)
-  }
-
-  function handleOpenGoalsModal({ year, sector, store }) {
-    api.get(`/goals/consolidated/${year}/${store}`)
-      .then(response => {
-        filtersConsolidatedBySector({ response, sector })
-      })
-      .catch(error => console.log(error))
-
-    api.get(`/goals/consolidation/${year}/${store}`)
-      .then(response => {
-        setConsolidation(response.data)
-      })
-      .catch(error => console.log(error))
-
-    api.get(`/goals/consolidated/${year}/${store}/${sector}`)
-      .then(response => listRequestsAndNotes(response))
-      .catch(error => console.log(error))
-
-    api.get(`requests/${year}/${sector}/${store}/`)
-      .then(response => setGoalsIdPerMonth(response.data))
-      .catch(error => console.log(error))
-
-    setIsGoalsModalOpen(true)
-  }
-
-  function handleCloseGoalsModal() {
-    setIsGoalsModalOpen(false)
-  }
-
-  function handleOpenNewRequestModal() {
-    setIsNewRequestModalOpen(true)
-  }
-
-  function handleCloseNewRequestModal() {
-    setIsNewRequestModalOpen(false)
-  }
-
-  function handleCreateNewRequest(event) {
-    event.preventDefault()
-    const { id, month, year } = goalsIdPerMonth.find(goal => goal.id === Number(monthRequest))
-
-    const data = { 
-      provider,
-      month: month,
-      year: `${new Date().getFullYear()}`, 
-      request_value: currencyValue(requestValue), 
-      store: user.store,
-      goals_id: id
-    }
-    
-    api.post("requests", data)
-      .then(response => {
-        dispatch({
-          type: "success",
-          message: `Pedido cadastrado!`,
-        })
-      })
-      .catch(error => {
-        dispatch({
-          type: "error",
-          message: error.response.data.message,
-        })
-      })
-
-    setProvider("")
-    setMonthRequest("")
-    setRequestValue("")
-    
-    handleCloseNewRequestModal()
-    handleCloseGoalsModal()
-    handleOpenGoalsModal({ year, sector, store: user.store })
-  }
-
-  function updateGoal(id) {
-    alert(id)
-  }
 
   const monthNumber = [
     {monthNumber: 1, FEV: 1, month: "FEV"}, 
@@ -236,6 +102,17 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       setOrder("ASC")
     }
   }
+  const [goalSort, setGoalSort] = useState([])
+  const sortingMonthDefault = (col, data) => {
+    if (order === "ASC") {
+      const sorted = [...data].sort((a, b) => {
+        const a_month = findNumberMonth(monthNumber, a[col])
+        const b_month = findNumberMonth(monthNumber, b[col])
+        return a_month.monthNumber > b_month.monthNumber ? 1 : -1
+      })
+      setGoalSort(sorted)
+    }
+  }
   const sortingNumber = (col) => {
     if (order === "ASC") {
       const sorted = [...requestsAndNotes].sort((a, b) => 
@@ -253,6 +130,169 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     }
   }
 
+  function filtersConsolidatedBySector({ response, sector }) {
+    const totalSector = []
+    const sectors = [sector]
+    
+    for (const sector of sectors) {
+      const result = response.data.filter(data => data.sector === sector)
+
+      for (const goal_month of result) {
+        const { goal, id } = goal_month
+
+        const { request } = goal_month.requests.reduce((accumulator, { request_value }) => {
+        accumulator.request = accumulator.request + Number(request_value) || Number(request_value)
+        return accumulator
+        }, {})
+
+        const { note } = goal_month.notes.reduce((accumulator, { note_value }) => {
+        accumulator.note = accumulator.note + Number(note_value) || Number(note_value)
+        return accumulator
+        }, {})
+
+        totalSector.push({
+          id,
+          goal,
+          sector: sector,
+          month: goal_month.month,
+          request: request ?? 0,
+          input: note ?? 0
+        })
+      }
+
+      const { goal, request, input } = totalSector.reduce((accumulator, { goal, request, input }) => {
+        accumulator.goal = accumulator.goal + Number(goal) || Number(goal)
+        accumulator.request = accumulator.request + request || request
+        accumulator.input = accumulator.input + input || input
+
+        return accumulator
+      }, {})
+
+      setTotalSectorGoal(goal)
+      setTotalSectorRequest(request)
+      setTotalSectorInput(input)
+    }
+    sortingMonthDefault("month", totalSector)
+    setSectorTotalPerMonth(totalSector)
+  }
+
+  function listRequestsAndNotes(response) {
+    const requestNotes = []
+    for (const request_note of response.data) {
+      for (const request of request_note.requests) {
+        const note = request_note.notes
+          .filter(note => note.requests_inputs_id === request.request_id)
+          .sort(function(a, b){ return Number(b.note_value) - Number(a.note_value) })[0]
+
+        requestNotes.push({
+          id: v4(),
+          year: request_note.year,
+          ...request,
+          ...note
+        })
+      }
+    }
+    
+    SetRequestsAndNotes(requestNotes)
+  }
+
+  function handleOpenGoalsModal({ year, sector, store }) {
+    api.get(`/goals/consolidated/${year}/${store}`)
+      .then(response => {
+        filtersConsolidatedBySector({ response, sector })
+      })
+      .catch(error => console.log(error))
+
+    api.get(`/goals/consolidation/${year}/${store}`)
+      .then(response => {
+        setConsolidation(response.data)
+      })
+      .catch(error => console.log(error))
+
+    api.get(`/goals/consolidated/${year}/${store}/${sector}`)
+      .then(response => listRequestsAndNotes(response))
+      .catch(error => console.log(error))
+
+    api.get(`requests/${year}/${sector}/${store}/`)
+      .then(response => setGoalsIdPerMonth(response.data))
+      .catch(error => console.log(error))
+
+    setIsGoalsModalOpen(true)
+  }
+
+  function handleCloseGoalsModal() {
+    setIsGoalsModalOpen(false)
+  }
+
+  function handleOpenNewRequestModal() {
+    setIsNewRequestModalOpen(true)
+  }
+
+  function handleCloseNewRequestModal() {
+    setIsNewRequestModalOpen(false)
+  }
+
+  function handleOpenUpdateGoalModal(id) {
+    setIdGoal(id)
+    setIsUpdateGoalModalOpen(true)
+  }
+
+  function handleCloseUpdateGoalModal() {
+    setIsUpdateGoalModalOpen(false)
+  }
+
+  function handleCreateNewRequest(event) {
+    event.preventDefault()
+    const { id, month, year } = goalsIdPerMonth.find(goal => goal.id === Number(monthRequest))
+
+    const data = { 
+      provider,
+      month: month,
+      year: `${new Date().getFullYear()}`, 
+      request_value: currencyValue(requestValue), 
+      store: user.store,
+      goals_id: id
+    }
+    
+    api.post("requests", data)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Pedido cadastrado!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+
+    setProvider("")
+    setMonthRequest("")
+    setRequestValue("")
+    
+    handleCloseNewRequestModal()
+    handleCloseGoalsModal()
+    handleOpenGoalsModal({ year, sector, store: user.store })
+  }
+
+  function handleUpdateGoal(event) {
+    event.preventDefault()
+    const data = { goal: currencyValue(updateGoal), id: idGoal }
+    
+    api.put("goals", data)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Meta atualizada!`,
+        })
+      })
+      .catch(error => console.log(error))
+    
+    handleCloseUpdateGoalModal()
+    handleCloseGoalsModal()
+  }
 
   const csvReportRequests = {
     filename: `${Date.now()}.csv`,
@@ -348,12 +388,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                   <th>Meta</th>
                   <th>Pedido</th>
                   <th>Entrada</th>
-                  <th>Ações</th>
+                  {userCanSeeAdmin && <th>Ações</th>}
                 </tr>
               </thead>
               <tbody>
                 {
-                  sectorTotalPerMonth.map(sector => {
+                  goalSort.map(sector => {
                     return (
                       <tr key={sector.id}>
                         <td>{sector.month}</td>
@@ -387,15 +427,15 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                             }).format(sector.input ?? 0)
                           } 
                         </td>
-                        <td>
+                        {userCanSeeAdmin && <td>
                           <button
                             className="button_icon"
-                            onClick={() => updateGoal(sector.id)}
+                            onClick={() => handleOpenUpdateGoalModal(sector.id)}
                             type="button"
                           >
                             <i><UilPen size="16"/></i>
                           </button>
-                        </td>
+                        </td>}
                       </tr>
                     )
                   })
@@ -549,6 +589,19 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
             
             <h2>PEDIDOS {sector?.toUpperCase()}</h2>
             
+            <div className="search">
+              <input type="text" placeholder="Pesquisar" /> 
+              <select>
+                <option value="">-- Escolher coluna --</option>
+                <option value="0">Fornecedor</option>
+                <option value="1">Mês</option>
+                <option value="4">Nota Fiscal</option>
+              </select>
+              <button
+                // onClick={}
+              >Pesquisar</button>
+            </div>
+
             <table>
               <thead>
                 <tr>
@@ -604,12 +657,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                           >
                             <i><UilSearchAlt size="16"/></i>
                           </button>
-                          <button
+                          {userCanSeeAdmin && <button
                             className="button_icon"
                             type="button"
                           >
                             <i><UilTrashAlt size="16" /></i>
-                          </button>
+                          </button>}
                         </td>
                       </tr>
                     )
@@ -673,6 +726,37 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
 
           <button type="submit">
             Cadastrar
+          </button>
+        </FormContainer>
+      </Modal>
+      <Modal
+        isOpen={isUpdateGoalModalOpen}
+        onRequestClose={handleCloseUpdateGoalModal}
+        overlayClassName="react-modal-overlay"
+        className="react-modal-content"
+      >
+        <button 
+          type="button" 
+          onClick={handleCloseUpdateGoalModal} 
+          className="react-modal-close"
+        >
+          <img src={closeImg} alt="Fechar modal" />
+        </button>
+
+        <FormContainer onSubmit={handleUpdateGoal}>
+          <h2>Editar meta</h2>
+
+          <input
+            type="text"
+            placeholder="Meta"
+            onKeyUp={handleKeyUp}
+            maxLength={11}
+            onChange={event => setUpdateGoal(event.target.value)}
+            required
+          />
+
+          <button type="submit">
+            Atualizar
           </button>
         </FormContainer>
       </Modal>
