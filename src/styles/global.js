@@ -117,6 +117,66 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
   }
+  .react-modal-goal-note {
+    width: 100%;
+    max-width: 976px;
+    max-height: 576px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 3rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    h2 {
+      margin: 1rem 0 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        border: 0;
+        color: var(--text-body);
+      }
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0 1.5rem;
+      height: 4rem;
+      border-radius: 0.25rem;
+
+      border: 1px solid #D7D7D7;
+      background: #E7E9EE;
+
+      font-weight: 400;
+      font-size: 1rem;
+
+      &::placeholder {
+        color: var(--text-body);
+      }
+
+      & + input {
+        margin-top: 1rem;
+      }
+      & + select {
+        margin-top: 1rem;
+      }
+    }
+  }
 
   .react-modal-content-goals {
     width: 1120px;

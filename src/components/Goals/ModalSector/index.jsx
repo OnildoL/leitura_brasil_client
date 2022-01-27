@@ -10,6 +10,7 @@ import { currency, currencyValue } from "../../../utils/masks"
 import { AuthContext } from "../../../contexts/AuthContext"
 import { useNotification } from "../../../hooks/useNotification"
 import { usePermission } from "../../../hooks/usePermission"
+import { ModalNotes } from "../ModalNotes"
 
 const headers_requests = [
   { label: "Ano", key: "year" },
@@ -27,11 +28,8 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const handleKeyUp = useCallback((e) => {
     currency(e)
   }, [])
-
   const { userCanSeeAdmin } = usePermission()
-
   const [order, setOrder] = useState("ASC")
-
   const [goalsIdPerMonth, setGoalsIdPerMonth] = useState([])
   const [requestsAndNotes, SetRequestsAndNotes] = useState([])
   const [sectorTotalPerMonth, setSectorTotalPerMonth] = useState([])
@@ -39,14 +37,11 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false)
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
   const [isUpdateGoalModalOpen, setIsUpdateGoalModalOpen] = useState(false)
-  
   const [updateGoal,setUpdateGoal] = useState("")
   const [idGoal,setIdGoal] = useState("")
-
   const [provider, setProvider] = useState("")
   const [monthRequest, setMonthRequest] = useState("")
   const [requestValue, setRequestValue] = useState("")
-
   const [totalSectorGoal, setTotalSectorGoal] = useState(0)
   const [totalSectorRequest, setTotalSectorRequest] = useState(0)
   const [totalSectorInput, setTotalSectorInput] = useState(0)
@@ -182,8 +177,17 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       for (const request of request_note.requests) {
         const note = request_note.notes
           .filter(note => note.requests_inputs_id === request.request_id)
-          .sort(function(a, b){ return Number(b.note_value) - Number(a.note_value) })[0]
-
+          .reduce((accumulator, { note_value, nf, issue, note_id, requests_inputs_id }) => {
+            accumulator.note_value = accumulator.note_value + Number(note_value) || Number(note_value)
+            accumulator.requests_inputs_id = requests_inputs_id
+            accumulator.note_id = note_id
+            accumulator.nf = nf
+            accumulator.issue = issue
+    
+            return accumulator
+          }, {})
+          // .sort(function(a, b){ return Number(b.note_value) - Number(a.note_value) })[0] // Para pegar apenas o valor total da nota de maior valor
+        
         requestNotes.push({
           id: v4(),
           year: request_note.year,
@@ -292,6 +296,30 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     
     handleCloseUpdateGoalModal()
     handleCloseGoalsModal()
+  }
+
+  const [notes, setNotes] = useState([])
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
+
+  function handleOpenNotesModal() {
+    setIsNotesModalOpen(true)
+  }
+  function handleCloseNotesModal() {
+    setIsNotesModalOpen(false)
+  }
+  function viewNote(id) {
+    api.get(`notes/${id}`)
+      .then(response => {
+        setNotes(response.data)
+
+        handleOpenNotesModal()
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
   }
 
   const csvReportRequests = {
@@ -645,7 +673,8 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                         </td>
                         <td>{request_note.nf}</td>
                         <td>
-                          {request_note.issue && new Intl.DateTimeFormat('pt-BR', { 
+                          {
+                            request_note.issue && new Intl.DateTimeFormat('pt-BR', { 
                               dateStyle: "short", 
                             }).format(new Date(request_note.issue))
                           }
@@ -653,6 +682,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                         <td>
                           <button
                             className="button_icon"
+                            onClick={() => viewNote(request_note.requests_inputs_id)}
                             type="button"
                           >
                             <i><UilSearchAlt size="16"/></i>
@@ -760,6 +790,13 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
           </button>
         </FormContainer>
       </Modal>
+
+      <ModalNotes 
+        isOpen={isNotesModalOpen}
+        onRequestClose={handleCloseNotesModal}
+        goals={goalsIdPerMonth}
+        notes={notes}
+      />
     </>
   )
 }

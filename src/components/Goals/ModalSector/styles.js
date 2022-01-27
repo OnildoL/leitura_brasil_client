@@ -93,7 +93,7 @@ export const Summary = styled.div`
   div {
     width: auto;
     background: var(--background);
-    padding: 1.5rem 1rem;
+    padding: 0.5rem;
     border-radius: 0.25rem;
     color: var(--text-title);
 
@@ -101,14 +101,6 @@ export const Summary = styled.div`
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-
-    strong {
-      display: block;
-      margin-top: 1rem;
-      font-size: 2rem;
-      font-weight: 500;
-      line-height: 3rem;
     }
 
     i {
