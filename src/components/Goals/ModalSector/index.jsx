@@ -1,7 +1,7 @@
 import Modal from "react-modal"
 import { CSVLink } from "react-csv"
 import { v4 } from "uuid"
-import { UilSearchAlt, UilExport, UilTrashAlt, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
+import { UilSearchAlt, UilExport, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
 import { Container, Content, FormContainer, Summary } from "./styles"
@@ -300,6 +300,8 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
 
   const [notes, setNotes] = useState([])
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
+  const [requestId, setRequestId] = useState(0)
+  const [requestData, setRequestData] = useState(0)
 
   function handleOpenNotesModal() {
     setIsNotesModalOpen(true)
@@ -307,8 +309,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   function handleCloseNotesModal() {
     setIsNotesModalOpen(false)
   }
-  function viewNote(id) {
-    api.get(`notes/${id}`)
+  function viewNote(request) {
+    setRequestId(request.requests_inputs_id ?? request.request_id)
+
+    setRequestData(request)
+    
+    api.get(`notes/${request.requests_inputs_id}`)
       .then(response => {
         setNotes(response.data)
 
@@ -319,6 +325,8 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
           type: "error",
           message: error.response.data.message,
         })
+        setNotes([])
+        handleOpenNotesModal()
       })
   }
 
@@ -682,17 +690,11 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                         <td>
                           <button
                             className="button_icon"
-                            onClick={() => viewNote(request_note.requests_inputs_id)}
+                            onClick={() => viewNote(request_note)}
                             type="button"
                           >
                             <i><UilSearchAlt size="16"/></i>
                           </button>
-                          {userCanSeeAdmin && <button
-                            className="button_icon"
-                            type="button"
-                          >
-                            <i><UilTrashAlt size="16" /></i>
-                          </button>}
                         </td>
                       </tr>
                     )
@@ -795,7 +797,9 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
         isOpen={isNotesModalOpen}
         onRequestClose={handleCloseNotesModal}
         goals={goalsIdPerMonth}
+        goal={requestData}
         notes={notes}
+        requestId={requestId}
       />
     </>
   )

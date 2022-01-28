@@ -1,15 +1,48 @@
 import Modal from "react-modal"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 
 import closeImg from "../../../assets/Img/close.svg"
 
-import { currency } from "../../../utils/masks"
+import { currency, currencyValue } from "../../../utils/masks"
 import { Container, FormContainer } from "./styles"
+import { api } from "../../../services/api"
+import { useNotification } from "../../../hooks/useNotification"
+import { usePermission } from "../../../hooks/usePermission"
 
-export function ModalNotes({ isOpen, onRequestClose, goals, notes }) {
+export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, requestId }) {
+  const [goalId, setGoalId] = useState(0)
+  const [requestValue, setRequestValue] = useState("")
+
+  const dispatch = useNotification()
+  const { userCanSeeAdmin } = usePermission()
+
   const handleKeyUp = useCallback((e) => {
     currency(e)
   }, [])
+
+  function handleUpdateRequest(event) {
+    event.preventDefault()
+
+    const [goals_id, month] = goalId.split(",")
+
+    const data = { 
+      goals_id: !goalId ? goal.goals_id : Number(goals_id),
+      month: !goalId ? goal.request_month : month,
+      id: requestId,
+      request_value: !requestValue ? goal.request_value: currencyValue(requestValue) 
+    }
+    
+    api.put("requests", data)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Pedido atualizado!`,
+        })
+
+        onRequestClose()
+      })
+      .catch(error => console.log(error))
+  }
 
   return (
     <Container>
@@ -27,20 +60,15 @@ export function ModalNotes({ isOpen, onRequestClose, goals, notes }) {
           <img src={closeImg} alt="Fechar modal" />
         </button>
 
-        <FormContainer>
+        {userCanSeeAdmin && <FormContainer onSubmit={handleUpdateRequest}>
           <h2>Pedido</h2>
 
-          <input 
-            type="text"
-            placeholder="Fornecedor"
-          />
-
-          <select required>
+          <select onChange={event => setGoalId(event.target.value)}>
             <option value="">-- Escolher mês referência --</option>
             {
               goals.map(goal => {
                 return (
-                  <option key={goal.id} value={goal.id}>{`${new Intl.NumberFormat('pt-BR', {
+                  <option key={goal.id} value={`${goal.id},${goal.month}`}>{`${new Intl.NumberFormat('pt-BR', {
                     minimumFractionDigits: 0, 
                     maximumFractionDigits: 0, 
                     style: 'currency',
@@ -55,13 +83,14 @@ export function ModalNotes({ isOpen, onRequestClose, goals, notes }) {
             type="text"
             onKeyUp={handleKeyUp}
             maxLength={10}
+            onChange={event => setRequestValue(event.target.value)}
             placeholder="Valor pedido"
           />
 
           <button type="submit">
             Atualizar
           </button>
-        </FormContainer>
+        </FormContainer>}
 
         <h2>Notas fiscais</h2>
         <table>
