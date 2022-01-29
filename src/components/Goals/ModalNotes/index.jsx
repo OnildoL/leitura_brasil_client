@@ -23,6 +23,15 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
   function handleUpdateRequest(event) {
     event.preventDefault()
 
+    if (!goalId && !requestValue) {
+      dispatch({
+        type: "error",
+        message: `Preencher campos!`,
+      })
+
+      return
+    }
+
     const [goals_id, month] = goalId.split(",")
 
     const data = { 

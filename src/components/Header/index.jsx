@@ -59,7 +59,7 @@ export function Header() {
             <li>
               cpd
               <ul>
-                <Link to="#"> {/* /notes */}
+                <Link to="/notes">
                   notas e produtos
                 </Link>
                 <Link to="#"> {/* /missings */}

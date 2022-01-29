@@ -151,7 +151,7 @@ export const SectorsManager = styled.section`
 
   div {
     width: 544px;
-    height: 21rem;
+    height: 24rem;
     background: var(--shape);
     padding: 2rem;
     border-radius: 0.25rem;
@@ -165,7 +165,7 @@ export const SectorsManager = styled.section`
 
   button {
     font-size: 1rem;
-    color: #000000;
+    color: var(--blue);
     background: none;
     border: 0;
     border-radius: 0.25rem;

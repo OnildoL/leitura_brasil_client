@@ -10,7 +10,7 @@ export const Content = styled.div`
     justify-content: center;
     flex-direction: column;
     margin: 1rem 0 1rem;
-
+    
     button {
       width: 100%;
       margin: 1rem 0 0;

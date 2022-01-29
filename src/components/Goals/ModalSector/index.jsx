@@ -634,8 +634,9 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 <option value="4">Nota Fiscal</option>
               </select>
               <button
-                // onClick={}
-              >Pesquisar</button>
+              >
+                Pesquisar
+              </button>
             </div>
 
             <table>
