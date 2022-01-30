@@ -1,16 +1,32 @@
 import Modal from "react-modal";
 import closeImg from "../../assets/Img/close.svg"
 import { UilClipboardNotes, UilSearchAlt  } from "@iconscout/react-unicons"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
 import { useWithSSRAuth } from '../../utils/withSSRAuth';
 import { Container, Content } from "./styles"
+import { api } from "../../services/api";
+import { useNotification } from "../../hooks/useNotification";
+import { Note } from "./Note";
+import { usePermission } from "../../hooks/usePermission";
 
 export function Notes() {
   useWithSSRAuth()
 
+  const { userCanSeeDev } = usePermission()
+  const dispatch = useNotification()
+  const [notes, setNotes] = useState([])
+  const [note, setNote] = useState({})
   const [optionsModalOpen, setOptionsModalOpen] = useState(false)
+  const [noteModalOpen, setNoteModalOpen] = useState(false)
+  const [fileNotes, setFileNotes] = useState("")
+  const el = useRef()
+
+  function handleChange(e) {
+    const file = e.target.files[0]
+    setFileNotes(file)
+  }
 
   function handleOpenOptions() {
     setOptionsModalOpen(true)
@@ -19,6 +35,52 @@ export function Notes() {
   function handleCloseOptions() {
     setOptionsModalOpen(false)
   }
+
+  function handleOpenNote(access_key) {
+
+    setNote(access_key)
+
+    setNoteModalOpen(true)
+  }
+
+  function handleCloseNote() {
+    setNoteModalOpen(false)
+  }
+
+  function handleInsertNotes(event) {
+    event.preventDefault()
+    
+    const formData = new FormData()
+    formData.append("file", fileNotes)
+    
+    api.post("notes", formData)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Notas inseridas!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+
+    setFileNotes("")
+    handleCloseOptions()
+  }
+
+  useEffect(() => {
+    api.get("notes")
+      .then(response => setNotes(response.data))
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+  }, [])
 
   return (
     <>
@@ -68,69 +130,53 @@ export function Notes() {
                   <th>Número</th>
                   <th>Emissão</th>
                   <th>Fornecedor</th>
-                  <th>Receber</th>
+                  {/* <th>Receber</th> */}
                   <th>Etiqueta</th>
                   <th>Chegou</th>
                   <th>Entrada</th>
                   <th>Frete</th>
-                  <th>Ações</th>
+                  {userCanSeeDev && <th>Ações</th>}
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>R$ 75.154,02</td>
-                  <td>15484872</td>
-                  <td>28/01/2022</td>
-                  <td className="defaul_field">FORNECEDOR DE JUJUBAS LTDA NOVA EDITORA DO MOMENTO SENSACIONAL</td>
-                  <td>Sim</td>
-                  <td className="consignacao">CONSIGNAÇÃO</td>
-                  <td>28/01/2022</td>
-                  <td>28/01/2022</td>
-                  <td>OK</td>
-                  <td>
-                    <button
-                      className="button_icon"
-                    >
-                      <i><UilSearchAlt className="table__icon" size="16" /></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>R$ 75.154,02</td>
-                  <td>15484872</td>
-                  <td>28/01/2022</td>
-                  <td className="defaul_field">FORNECEDOR DE JUJUBAS LTDA NOVA EDITORA DO MOMENTO SENSACIONAL</td>
-                  <td>Sim</td>
-                  <td className="consignacao">CONSIGNAÇÃO</td>
-                  <td>28/01/2022</td>
-                  <td>28/01/2022</td>
-                  <td>OK</td>
-                  <td>
-                    <button
-                      className="button_icon"
-                    >
-                      <i><UilSearchAlt className="table__icon" size="16" /></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>R$ 75.154,02</td>
-                  <td>15484872</td>
-                  <td>28/01/2022</td>
-                  <td className="defaul_field">FORNECEDOR DE JUJUBAS LTDA NOVA EDITORA DO MOMENTO SENSACIONAL</td>
-                  <td>Sim</td>
-                  <td className="consignacao">CONSIGNAÇÃO</td>
-                  <td>28/01/2022</td>
-                  <td>28/01/2022</td>
-                  <td>OK</td>
-                  <td>
-                    <button
-                      className="button_icon"
-                    >
-                      <i><UilSearchAlt className="table__icon" size="16" /></i>
-                    </button>
-                  </td>
-                </tr>
+                {
+                  notes.map(note => {
+                    return (
+                      <tr key={note.id}>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(note.value ?? 0)
+                          }  
+                        </td>
+                        <td>{note.nf}</td>
+                        <td>
+                          {
+                            new Intl.DateTimeFormat('pt-BR', { 
+                              dateStyle: "short", 
+                            }).format(new Date(note.issue))
+                          }
+                        </td>
+                        <td className="defaul_field">{note.provider}</td>
+                        {/* <td>Sim</td> */}
+                        <td>{note.hangtag}</td>
+                        <td>{note.arrival}</td>
+                        <td>{note.input}</td>
+                        <td>{note.situation}</td>
+                        {userCanSeeDev && <td>
+                          <button
+                            onClick={() => handleOpenNote(note.access_key)}
+                            className="button_icon"
+                          >
+                            <i><UilSearchAlt className="table__icon" size="16" /></i>
+                          </button>
+                        </td>}
+                      </tr>
+                    )
+                  })
+                }
               </tbody>
             </table>
           </div>
@@ -150,17 +196,17 @@ export function Notes() {
             </button>
 
             <h2>Opções de notas</h2>
-            <p>Formato suportado: .xlsx ou .csv</p>
+            <p>Formato suportado: .xlsx</p>
 
-            <div>
+            <form onSubmit={handleInsertNotes}>
               <span>Inserir notas</span>
-              <input type="file" />
-              <button className="button">
+              <input type="file" ref={el} onChange={handleChange} required/>
+              <button type="submit" className="button">
                 Inserir
               </button>
-            </div>
+            </form>
 
-            <div>
+            {/* <div>
               <span>Inserir produtos</span>
               <input type="file" />
               <button className="button">
@@ -174,9 +220,15 @@ export function Notes() {
               <button className="button">
                 Inserir
               </button>
-            </div>
+            </div> */}
 
           </Modal>
+
+          <Note 
+            isOpen={noteModalOpen}
+            onRequestClose={handleCloseNote}
+            note={note}
+          />
 
         </Content>
       </Container>

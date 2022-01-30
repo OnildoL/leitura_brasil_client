@@ -124,9 +124,8 @@ export function Users() {
                 <h2>Cadastrar usuário</h2>
 
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Usuário"
-                  value={user}
                   onChange={event => setUser(Number(event.target.value))}
                   required
                 />
@@ -134,19 +133,17 @@ export function Users() {
                 <input
                   type="password"
                   placeholder="Senha"
-                  value={password}
                   onChange={event => setPassword(event.target.value)}
                   required
                 />
 
                 <input
                   placeholder="Nome" 
-                  value={name}
                   onChange={event => setName(event.target.value)}
                   required
                 />
 
-                <select value={role} onChange={event => setRole(event.target.value)} required>
+                <select onChange={event => setRole(event.target.value)} required>
                   <option value="">-- Escolher Função --</option>
                   <option value="manager">Gerente</option>
                   <option value="coordinator">Coordenador</option>
@@ -154,7 +151,7 @@ export function Users() {
                   <option value="assistant">Assistente</option>
                 </select>
 
-                <select value={store} onChange={event => setStore(event.target.value)} required>
+                <select onChange={event => setStore(event.target.value)} required>
                   <option value="">-- Escolher Loja --</option>
                   <option value="31">Leitura Manaíra</option>
                   <option value="69">Leitura Mangabeira</option>

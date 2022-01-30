@@ -90,10 +90,6 @@ export const Content = styled.div`
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
     background: #FFFFFF;
   }
-  .consignacao {
-    color: #FFFFFF;
-    background: #025A00;
-  }
   .button_icon {
     border: 0;
     font-size: 1rem;

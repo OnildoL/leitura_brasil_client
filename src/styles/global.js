@@ -231,7 +231,10 @@ export const GlobalStyle = createGlobalStyle`
         margin-top: 1rem;
       }
     }
-
+    .progessBar {
+      margin: 0 0 0 0.5rem;
+      color: var(--blue);
+    }
     .button {
       width: 100%;
       margin: 0 0 1rem;

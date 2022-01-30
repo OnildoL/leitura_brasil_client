@@ -12,6 +12,7 @@ import { usePermission } from "../../../hooks/usePermission"
 export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, requestId }) {
   const [goalId, setGoalId] = useState(0)
   const [requestValue, setRequestValue] = useState("")
+  const [accessKey, setAccessKey] = useState("")
 
   const dispatch = useNotification()
   const { userCanSeeAdmin } = usePermission()
@@ -53,6 +54,27 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
       .catch(error => console.log(error))
   }
 
+  function handleLinkNote(event) {
+    event.preventDefault()
+
+    const data = { requests_inputs_id: requestId, access_key: accessKey }
+
+    api.put("requests/link", data)
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Nota vinculada!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+
+    setAccessKey("")
+  }
   return (
     <Container>
       <Modal
@@ -100,6 +122,25 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
             Atualizar
           </button>
         </FormContainer>}
+
+        <details>
+          <summary>Vincular nota</summary>
+          <FormContainer onSubmit={handleLinkNote}>
+            <h2>Vincular nota</h2>
+
+            <input 
+              type="text"
+              maxLength={44}
+              onChange={event => setAccessKey(event.target.value)}
+              placeholder="Chave de acesso"
+              required
+            />
+
+            <button type="submit">
+              Vincular
+            </button>
+          </FormContainer>
+        </details>
 
         <h2>Notas fiscais</h2>
         <table>
