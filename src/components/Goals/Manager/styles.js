@@ -14,6 +14,11 @@ export const Sectors = styled.section`
     padding: 2rem;
     border-radius: 0.25rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+    @media (max-width: 1440px) {
+      max-width: 440px;
+    }
+
     table {
       width: 100%;
       border-spacing: 0 0.2rem;

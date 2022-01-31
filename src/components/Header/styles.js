@@ -18,6 +18,10 @@ export const Content = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  @media (max-width: 1440px) {
+    max-width: 900px;
+  }
+
   ul {
     display: flex;
 
@@ -77,7 +81,6 @@ export const Content = styled.div`
   .user {
     margin-left: 3rem;
     color: #FFFFFF;
-
     select {
       margin-left: 1rem;
     }

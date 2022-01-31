@@ -4,6 +4,10 @@ export const Container = styled.main`
   max-width: 1120px;
   margin: 0 auto;
   margin-top: 3.5rem;
+
+  @media (max-width: 1440px) {
+    max-width: 900px;
+  }
 `
 
 export const Content = styled.div`
@@ -114,7 +118,12 @@ export const Content = styled.div`
     table {
       width: 1120px;
       border-spacing: 0 0.2rem;
+      margin: 0 0 3rem 0;
 
+      @media (max-width: 1440px) {
+        max-width: 900px;
+      }
+      
       tbody > tr {
         background: var(--shape);
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
@@ -126,6 +135,10 @@ export const Content = styled.div`
         font-weight: 400;
         text-align: left;
         line-height: 1.5rem;
+
+        @media (max-width: 1440px) {
+          padding: 0;
+        }
       }
 
       td {

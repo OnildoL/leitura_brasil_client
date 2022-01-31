@@ -3,6 +3,10 @@ import styled from "styled-components"
 export const Container = styled.section`
   max-width: 1120px;
   margin: 0 auto;
+  
+  @media (max-width: 1440px) {
+    max-width: 900px;
+  }
 `
 
 export const Content = styled.div`
@@ -18,6 +22,9 @@ export const Content = styled.div`
       padding: 1rem 2rem;
       text-align: left;
       line-height: 1.5rem;
+      @media (max-width: 1440px) {
+        padding: 0;
+      }
     }
 
     td {
@@ -25,6 +32,9 @@ export const Content = styled.div`
       border: 0;
       color: var(--text-body);
 
+      @media (max-width: 1440px) {
+        padding: 0;
+      }
       &:first-child {
         color: var(--text-title)
       }

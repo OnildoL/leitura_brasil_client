@@ -27,12 +27,15 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    @media (max-width: 1080px) {
+    @media (max-width: 1366px) {
       font-size: 93.75%;
+    }
+    @media (max-width: 1080px) {
+      font-size: 87.5%;
     }
 
     @media (max-width: 720px) {
-      font-size: 87.5%;
+      font-size: 81.25%;
     }
   }
 
@@ -85,10 +88,16 @@ export const GlobalStyle = createGlobalStyle`
   .react-modal-content {
     width: 100%;
     max-width: 576px;
+    max-height: 525px;
+    overflow-y: scroll;
     background: var(--shape);
     padding: 3rem;
     position: relative;
     border-radius: 0.24rem;
+
+    @media (max-width: 1366px) {
+      
+    }
 
     p {
       color: var(--text-sub-title);
@@ -174,6 +183,10 @@ export const GlobalStyle = createGlobalStyle`
     padding: 3rem;
     position: relative;
     border-radius: 0.24rem;
+
+    @media (max-width: 1440px) {
+      max-height: 525px;
+    }
 
     p {
       color: var(--text-sub-title);
@@ -263,6 +276,11 @@ export const GlobalStyle = createGlobalStyle`
     position: relative;
     border-radius: 0.24rem;
 
+    @media (max-width: 1440px) {
+      max-width: 850px;
+      max-height: 550px;
+    }
+
     h2 {
       margin: 1rem 0 1rem;
     }
@@ -323,6 +341,11 @@ export const GlobalStyle = createGlobalStyle`
     position: relative;
     border-radius: 0.24rem;
 
+    @media (max-width: 1440px) {
+      width: 900px;
+      max-height: 580px;
+    }
+
     h2 {
       margin-top: 1.2rem;
     }
@@ -342,6 +365,10 @@ export const GlobalStyle = createGlobalStyle`
         text-align: left;
         line-height: 1.5rem;
         cursor: pointer;
+
+        @media (max-width: 1440px) {
+          padding: 0;
+        }
       }
 
       td {

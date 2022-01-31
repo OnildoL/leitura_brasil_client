@@ -14,7 +14,6 @@ export function Main() {
       <Container>
         <Content>
           <p>
-            <i><UilBookOpen size="50" /></i>
             leitura brasil
           </p>
           <span>

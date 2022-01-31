@@ -59,6 +59,10 @@ export const Content = styled.div`
   max-width: 1120px;
   margin: 0 auto;
 
+  @media (max-width: 1440px) {
+    max-width: 900px;
+  }
+
   section {
     h1 {
       font-size: 1.2rem;
@@ -125,7 +129,7 @@ export const Sectors = styled.section`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-
+  
   div {
     height: 12rem;
     background: var(--shape);
@@ -136,13 +140,17 @@ export const Sectors = styled.section`
     h3 {
       font-size: 1rem;
       text-transform: uppercase;
+
+      @media (max-width: 1366px) {
+        font-size: 0.9rem;
+      }
     }
   }
 `
 export const SectorsManager = styled.section`
   max-width: 1120px;
   margin: 0 auto;
-  margin: 2rem 0 0 0;
+  margin: 2rem 0 3rem 0;
   
   display: grid;
   grid-template-columns: repeat(2, 1fr);

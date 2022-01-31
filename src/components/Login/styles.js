@@ -17,6 +17,10 @@ export const Content = styled.form`
   padding: 45px;
   border-radius: 0.25rem;
 
+  @media (max-width: 420px) {
+    max-width: 320px;
+  }
+
   img {
     display: flex;
     margin: 0 auto;

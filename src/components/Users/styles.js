@@ -59,6 +59,11 @@ export const Content = styled.div`
   max-width: 1120px;
   margin: 0 auto;
 
+  
+  @media (max-width: 1440px) {
+    max-width: 900px;
+  }
+
   section {
     margin-top: 20px;
 
