@@ -6,6 +6,7 @@ import { Users } from "./components/Users"
 import { Table } from "./components/Users/UsersTable"
 import { Login } from "./components/Login"
 import { Notes } from "./pages/Notes"
+import { Profiles } from "./pages/Profiles"
 
 export function App() {
   return (
@@ -18,6 +19,12 @@ export function App() {
           path="/notes" 
           element={
             <Notes />
+          }
+        />
+        <Route 
+          path="/profiles" 
+          element={
+            <Profiles />
           }
         />
         <Route

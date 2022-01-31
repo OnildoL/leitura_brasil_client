@@ -60,8 +60,6 @@ export const Content = styled.div`
   margin: 0 auto;
 
   section {
-    margin-top: 20px;
-
     h1 {
       font-size: 1.2rem;
     }
@@ -144,6 +142,7 @@ export const Sectors = styled.section`
 export const SectorsManager = styled.section`
   max-width: 1120px;
   margin: 0 auto;
+  margin: 2rem 0 0 0;
   
   display: grid;
   grid-template-columns: repeat(2, 1fr);

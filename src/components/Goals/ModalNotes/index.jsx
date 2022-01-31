@@ -127,10 +127,12 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
           <summary>Vincular nota</summary>
           <FormContainer onSubmit={handleLinkNote}>
             <h2>Vincular nota</h2>
+            <p>*Após vincular notas a este pedido, fechar e abrir a janela de pedidos e metas para recarregar a listagem dos pedidos com as notas vinculadas!</p>
 
             <input 
               type="text"
               maxLength={44}
+              value={accessKey}
               onChange={event => setAccessKey(event.target.value)}
               placeholder="Chave de acesso"
               required
@@ -155,7 +157,7 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
             {
               notes.map(note => {
                 return (
-                  <tr>
+                  <tr key={note.id}>
                     <td>
                     {
                       new Intl.NumberFormat('pt-BR', {

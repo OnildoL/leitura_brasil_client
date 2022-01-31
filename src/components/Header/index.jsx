@@ -74,7 +74,7 @@ export function Header() {
             <li>
               <i><UilApps size="13" /></i>
               <ul>
-                <Link to="#"> {/* /profiles */}
+                <Link to="/profiles">
                   perfil
                 </Link>
                 <li onClick={logOut}>

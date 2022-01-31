@@ -1,7 +1,7 @@
 import Modal from "react-modal"
 import { CSVLink } from "react-csv"
 import { v4 } from "uuid"
-import { UilSearchAlt, UilExport, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
+import { UilSearchAlt, UilChartLine, UilExport, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
 import { Container, Content, FormContainer, Summary } from "./styles"
@@ -28,13 +28,14 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   const handleKeyUp = useCallback((e) => {
     currency(e)
   }, [])
-  const { userCanSeeAdmin } = usePermission()
+  const { userCanSeeAdmin, userCanSeeDev } = usePermission()
   const [order, setOrder] = useState("ASC")
   const [goalsIdPerMonth, setGoalsIdPerMonth] = useState([])
   const [requestsAndNotes, SetRequestsAndNotes] = useState([])
   const [sectorTotalPerMonth, setSectorTotalPerMonth] = useState([])
   const [consolidation, setConsolidation] = useState({})
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false)
+  const [isConsolidatedModalOpen, setIsConsolidatedModalOpen] = useState(false)
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
   const [isUpdateGoalModalOpen, setIsUpdateGoalModalOpen] = useState(false)
   const [updateGoal,setUpdateGoal] = useState("")
@@ -200,16 +201,24 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     SetRequestsAndNotes(requestNotes)
   }
 
+  function handleOpenConsolidated({ year, store }) {
+    api.get(`/goals/consolidation/${year}/${store}`)
+      .then(response => {
+        setConsolidation(response.data)
+      })
+      .catch(error => console.log(error))
+
+    setIsConsolidatedModalOpen(true)
+  }
+
+  function handleCloseConsolidated() {
+    setIsConsolidatedModalOpen(false)
+  }
+
   function handleOpenGoalsModal({ year, sector, store }) {
     api.get(`/goals/consolidated/${year}/${store}`)
       .then(response => {
         filtersConsolidatedBySector({ response, sector })
-      })
-      .catch(error => console.log(error))
-
-    api.get(`/goals/consolidation/${year}/${store}`)
-      .then(response => {
-        setConsolidation(response.data)
       })
       .catch(error => console.log(error))
 
@@ -381,6 +390,15 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                       >
                         <i><UilSearchAlt size="16"/></i>
                       </button>
+                      <button
+                      onClick={() => handleOpenConsolidated({ 
+                        year: sector.year, 
+                        store: sector.store 
+                      })}
+                        type="button"
+                      >
+                        <i><UilChartLine size="16"/></i>
+                      </button>
                     </td>
                   </tr>
                 )
@@ -523,7 +541,107 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 </strong>
               </div>
             </Summary>
+            
+            <h2>PEDIDOS {sector?.toUpperCase()}</h2>
+            
+            {userCanSeeDev && <div className="search">
+              <input type="text" placeholder="Pesquisar" /> 
+              <select>
+                <option value="">-- Escolher coluna --</option>
+                <option value="0">Fornecedor</option>
+                <option value="1">Mês</option>
+                <option value="4">Nota Fiscal</option>
+              </select>
+              <button
+              >
+                Pesquisar
+              </button>
+            </div>}
 
+            <table>
+              <thead>
+                <tr>
+                  <CSVLink {...csvReportRequests}>
+                    <UilExport />
+                    Exportar CSV
+                  </CSVLink>
+                </tr>
+                <tr>
+                  <th onClick={() => sortingString("request_provider")}>Fornecedor</th>
+                  <th onClick={() => sortingMonth("request_month")}>Mês</th>
+                  <th onClick={() => sortingNumber("request_value")}>Valor Pedido</th>
+                  <th onClick={() => sortingNumber("note_value")}>Valor Nota</th>
+                  <th onClick={() => sortingNumber("nf")}>Número</th>
+                  <th>Emissão</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  requestsAndNotes.map(request_note => {
+                    return (
+                      <tr key={request_note.id}>
+                        <td>{request_note.request_provider.toUpperCase()}</td>
+                        <td>{request_note.request_month}</td>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(request_note.request_value ?? 0)
+                          }  
+                        </td>
+                        <td>
+                          {
+                            new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(request_note.note_value ?? 0)
+                          }  
+                        </td>
+                        <td>{request_note.nf}</td>
+                        <td>
+                          {
+                            request_note.issue && new Intl.DateTimeFormat('pt-BR', { 
+                              dateStyle: "short", 
+                            }).format(new Date(request_note.issue))
+                          }
+                        </td>
+                        <td>
+                          <button
+                            className="button_icon"
+                            onClick={() => viewNote(request_note)}
+                            type="button"
+                          >
+                            <i><UilSearchAlt size="16"/></i>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
+                }
+              </tbody>
+            </table>
+          </Content>
+        </Container>
+
+      </Modal>
+      <Modal
+        isOpen={isConsolidatedModalOpen}
+        onRequestClose={handleCloseConsolidated}
+        overlayClassName="react-modal-overlay"
+        className="react-modal-content-goals"
+      >
+        <button 
+          type="button" 
+          onClick={handleCloseConsolidated} 
+          className="react-modal-close"
+        >
+          <img src={closeImg} alt="Fechar modal" />
+        </button>
+
+        <Container>
+          <Content>
             <h2>CONSOLIDADO DO ANO</h2>
 
             <table>
@@ -623,86 +741,6 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </div>
             </Summary>
             
-            <h2>PEDIDOS {sector?.toUpperCase()}</h2>
-            
-            <div className="search">
-              <input type="text" placeholder="Pesquisar" /> 
-              <select>
-                <option value="">-- Escolher coluna --</option>
-                <option value="0">Fornecedor</option>
-                <option value="1">Mês</option>
-                <option value="4">Nota Fiscal</option>
-              </select>
-              <button
-              >
-                Pesquisar
-              </button>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <CSVLink {...csvReportRequests}>
-                    <UilExport />
-                    Exportar CSV
-                  </CSVLink>
-                </tr>
-                <tr>
-                  <th onClick={() => sortingString("request_provider")}>Fornecedor</th>
-                  <th onClick={() => sortingMonth("request_month")}>Mês</th>
-                  <th onClick={() => sortingNumber("request_value")}>Valor Pedido</th>
-                  <th onClick={() => sortingNumber("note_value")}>Valor Nota</th>
-                  <th onClick={() => sortingNumber("nf")}>Número</th>
-                  <th>Emissão</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  requestsAndNotes.map(request_note => {
-                    return (
-                      <tr key={request_note.id}>
-                        <td>{request_note.request_provider.toUpperCase()}</td>
-                        <td>{request_note.request_month}</td>
-                        <td>
-                          {
-                            new Intl.NumberFormat('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL'
-                            }).format(request_note.request_value ?? 0)
-                          }  
-                        </td>
-                        <td>
-                          {
-                            new Intl.NumberFormat('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL'
-                            }).format(request_note.note_value ?? 0)
-                          }  
-                        </td>
-                        <td>{request_note.nf}</td>
-                        <td>
-                          {
-                            request_note.issue && new Intl.DateTimeFormat('pt-BR', { 
-                              dateStyle: "short", 
-                            }).format(new Date(request_note.issue))
-                          }
-                        </td>
-                        <td>
-                          <button
-                            className="button_icon"
-                            onClick={() => viewNote(request_note)}
-                            type="button"
-                          >
-                            <i><UilSearchAlt size="16"/></i>
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </table>
           </Content>
         </Container>
 

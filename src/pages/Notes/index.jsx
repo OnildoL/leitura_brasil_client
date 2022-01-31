@@ -37,7 +37,7 @@ export function Notes() {
   }
 
   function handleOpenNote(access_key) {
-
+    // Fazer em breve!
     setNote(access_key)
 
     setNoteModalOpen(true)
@@ -106,7 +106,7 @@ export function Notes() {
             </button>
           </section>
 
-          <div className="search panel">
+          {userCanSeeDev && <div className="search panel">
             <input type="text" placeholder="Pesquisar" /> 
             <select>
               <option value="">-- Escolher coluna --</option>
@@ -120,7 +120,7 @@ export function Notes() {
             >
               Pesquisar
             </button>
-          </div>
+          </div>}
 
           <div>
             <table>

@@ -233,7 +233,7 @@ export function Goals() {
             </Modal>
           </section>}
 
-          {!userCanSeeSelectStore && <Sectors>
+          {!userCanSeeSelectStore && !userCanSeeAdmin && <Sectors>
             <div>
               <i><UilBooks /></i>
               <h3>livraria</h3>
@@ -324,6 +324,10 @@ export function Goals() {
             <Manager store="98" store_name="leitura recife" />
             <Manager store="108" store_name="leitura caruaru" />
             <Manager store="76" store_name="leitura campina grande" />
+          </SectorsManager>}
+
+          {!userCanSeeSelectStore && userCanSeeAdmin && <SectorsManager>
+            <Manager store={user.store} store_name={`Loja: ${user.store}`} />
           </SectorsManager>}
 
         </Content>

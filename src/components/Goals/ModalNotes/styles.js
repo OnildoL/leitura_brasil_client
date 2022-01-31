@@ -30,9 +30,11 @@ export const FormContainer = styled.form`
   h2 {
     color: var(--text-title);
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
-
+  p {
+    color: red;
+  }
   select, input {
     width: 100%;
     padding: 0 1.5rem;
