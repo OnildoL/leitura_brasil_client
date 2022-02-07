@@ -105,7 +105,7 @@ export function Manager({ store, store_name }) {
   }
 
   useEffect(() => {
-    if (inputYear.length === 4) {
+    if (inputYear.length === 4 && !isNaN(inputYear)) {
       api.get(`/goals/consolidated/${inputYear}/${store}`)
         .then(response => {
            filtersConsolidatedBySector(response)

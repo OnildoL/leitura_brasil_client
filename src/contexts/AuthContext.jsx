@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await api.post("sessions", {
         user,
-        password
+        password,
       })
       
       const { user: userNumber, name, role, store, permission } = data.user

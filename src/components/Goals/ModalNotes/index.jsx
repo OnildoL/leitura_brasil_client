@@ -1,4 +1,5 @@
 import Modal from "react-modal"
+import { UilTrashAlt } from '@iconscout/react-unicons'
 import { useCallback, useState } from "react"
 
 import closeImg from "../../../assets/Img/close.svg"
@@ -11,20 +12,20 @@ import { usePermission } from "../../../hooks/usePermission"
 
 export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, requestId }) {
   const [goalId, setGoalId] = useState(0)
+  const [requestName, setRequestName] = useState("")
   const [requestValue, setRequestValue] = useState("")
   const [accessKey, setAccessKey] = useState("")
-
   const dispatch = useNotification()
   const { userCanSeeAdmin } = usePermission()
-
+  
   const handleKeyUp = useCallback((e) => {
     currency(e)
   }, [])
 
   function handleUpdateRequest(event) {
     event.preventDefault()
-
-    if (!goalId && !requestValue) {
+    
+    if (!goalId && !requestValue && !requestName) {
       dispatch({
         type: "error",
         message: `Preencher campos!`,
@@ -33,9 +34,11 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
       return
     }
 
-    const [goals_id, month] = goalId.split(",")
+    const ifGoalIdEqualZero = `${goal.goals_id},${goal.request_month}`
+    const [goals_id, month] = !goalId ? ifGoalIdEqualZero.split(",") : goalId.split(",")
 
-    const data = { 
+    const data = {
+      provider: !requestName ? goal.request_provider : requestName,
       goals_id: !goalId ? goal.goals_id : Number(goals_id),
       month: !goalId ? goal.request_month : month,
       id: requestId,
@@ -49,6 +52,10 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
           message: `Pedido atualizado!`,
         })
 
+        setGoalId(0)
+        setRequestName("")
+        setRequestValue("")
+        
         onRequestClose()
       })
       .catch(error => console.log(error))
@@ -75,6 +82,25 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
 
     setAccessKey("")
   }
+
+  function handleRemoveNoteLinking(access_key) {
+    api.put("requests/remove/note", { access_key })
+      .then(response => {
+        dispatch({
+          type: "success",
+          message: `Nota removida!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: error.response.data.message,
+        })
+      })
+
+    onRequestClose()
+  }
+
   return (
     <Container>
       <Modal
@@ -93,6 +119,13 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
 
         {userCanSeeAdmin && <FormContainer onSubmit={handleUpdateRequest}>
           <h2>Pedido</h2>
+
+          <input 
+            type="text"
+            maxLength={20}
+            onChange={event => setRequestName(event.target.value)}
+            placeholder="Nome pedido"
+          />
 
           <select onChange={event => setGoalId(event.target.value)}>
             <option value="">-- Escolher mês referência --</option>
@@ -145,12 +178,14 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
         </details>
 
         <h2>Notas fiscais</h2>
+
         <table>
           <thead>
             <tr>
               <th>Valor total</th>
               <th>Nota fiscal</th>
               <th>Emissão</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -173,6 +208,14 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
                         dateStyle: "short", 
                       }).format(new Date(note.issue))
                     }
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleRemoveNoteLinking(note.access_key)}
+                        type="button"
+                      >
+                        <i><UilTrashAlt size="16" /></i>
+                      </button>
                     </td>
                   </tr>
                 )

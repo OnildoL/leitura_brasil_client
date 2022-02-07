@@ -7,9 +7,9 @@ let isRefreshing = false
 let failedRequestsQueue = []
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.9:8080",
+  baseURL: "https://apiadm.leitura.com.br",
   headers: {
-    Authorization: `Bearer ${cookies["leitura_brasil.token"]}`
+    Authorization: `Bearer ${cookies["leitura_brasil.token"]}` 
   }
 })
 

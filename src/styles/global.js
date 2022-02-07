@@ -330,6 +330,13 @@ export const GlobalStyle = createGlobalStyle`
         margin-top: 1rem;
       }
     }
+
+    button {
+      color: var(--blue);
+      background: none;
+      border: 0;
+      border-radius: 0.25rem;
+    }
   }
 
   .react-modal-content-goals {

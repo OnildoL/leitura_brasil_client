@@ -277,7 +277,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: `Já existe pedido cadastrado`,
         })
       })
 
@@ -319,11 +319,12 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     setIsNotesModalOpen(false)
   }
   function viewNote(request) {
+    const requestInputsId = request.requests_inputs_id
     setRequestId(request.requests_inputs_id ?? request.request_id)
 
     setRequestData(request)
     
-    api.get(`notes/${request.requests_inputs_id}`)
+    api.get(`notes/${!requestInputsId ? request.request_id : requestInputsId}`)
       .then(response => {
         setNotes(response.data)
 
@@ -558,14 +559,15 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </button>
             </div>}
 
+            <div>
+              <CSVLink {...csvReportRequests}>
+                <UilExport />
+                Exportar CSV
+              </CSVLink>
+            </div>
+            
             <table>
               <thead>
-                <tr>
-                  <CSVLink {...csvReportRequests}>
-                    <UilExport />
-                    Exportar CSV
-                  </CSVLink>
-                </tr>
                 <tr>
                   <th onClick={() => sortingString("request_provider")}>Fornecedor</th>
                   <th onClick={() => sortingMonth("request_month")}>Mês</th>

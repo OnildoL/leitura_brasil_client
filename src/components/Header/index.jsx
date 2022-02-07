@@ -77,6 +77,9 @@ export function Header() {
                 <Link to="/profiles">
                   perfil
                 </Link>
+                <li>
+                  Ajuda
+                </li>
                 <li onClick={logOut}>
                   sair
                 </li>

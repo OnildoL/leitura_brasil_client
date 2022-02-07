@@ -38,7 +38,7 @@ export function Goals() {
     currency(e)
   }, [])
 
-  const { userCanSeeAdmin, userCanSeeSelectStore, userCanSeeDev } = usePermission()
+  const { userCanSeeAdmin, userCanSeeSelectStore } = usePermission()
 
   const [selectedStore, setSelectedStore] = useState("")
   const [toSector, setToSector] = useState("")
@@ -215,7 +215,7 @@ export function Goals() {
                   <option value="JAN">Janeiro</option>
                 </select>
   
-                {userCanSeeDev && <select value={store} onChange={event => setStore(event.target.value)} required>
+                {userCanSeeSelectStore && <select value={store} onChange={event => setStore(event.target.value)} required>
                   <option value="">-- Escolher loja --</option>
                   <option value="31">Leitura Manaíra</option>
                   <option value="69">Leitura Mangabeira</option>

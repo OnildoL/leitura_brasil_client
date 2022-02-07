@@ -21,6 +21,8 @@ export function Notes() {
   const [optionsModalOpen, setOptionsModalOpen] = useState(false)
   const [noteModalOpen, setNoteModalOpen] = useState(false)
   const [fileNotes, setFileNotes] = useState("")
+  const [valueSearch, setValueSearch] = useState("")
+  const [columnSearch, setColumnSearch] = useState("")
   const el = useRef()
 
   function handleChange(e) {
@@ -71,6 +73,12 @@ export function Notes() {
     handleCloseOptions()
   }
 
+  function handleSearch() {
+    const filter = notes.filter(note => note[columnSearch] === valueSearch)
+    
+    setNotes(filter)
+  }
+
   useEffect(() => {
     api.get("notes")
       .then(response => setNotes(response.data))
@@ -107,16 +115,23 @@ export function Notes() {
           </section>
 
           {userCanSeeDev && <div className="search panel">
-            <input type="text" placeholder="Pesquisar" /> 
-            <select>
+            <input 
+              type="text" 
+              placeholder="Pesquisar"
+              onChange={event => setValueSearch(event.target.value)} 
+            /> 
+
+            <select onChange={event => setColumnSearch(event.target.value)} >
               <option value="">-- Escolher coluna --</option>
-              <option value="1">Número</option>
-              <option value="3">Fornecedor</option>
-              <option value="5">Etiqueta</option>
-              <option value="6">Chegou</option>
-              <option value="7">Entrada</option>
+              <option value="nf">Número</option>
+              <option value="provider">Fornecedor</option>
+              <option value="hangtag">Etiqueta</option>
+              <option value="arrival">Chegou</option>
+              <option value="input">Entrada</option>
             </select>
+
             <button
+              onClick={() => handleSearch()}
             >
               Pesquisar
             </button>
@@ -130,12 +145,12 @@ export function Notes() {
                   <th>Número</th>
                   <th>Emissão</th>
                   <th>Fornecedor</th>
-                  {/* <th>Receber</th> */}
+                  <th>Receber</th>
                   <th>Etiqueta</th>
                   <th>Chegou</th>
                   <th>Entrada</th>
                   <th>Frete</th>
-                  {userCanSeeDev && <th>Ações</th>}
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -160,19 +175,19 @@ export function Notes() {
                           }
                         </td>
                         <td className="defaul_field">{note.provider}</td>
-                        {/* <td>Sim</td> */}
+                        <td>{note.receive}</td>
                         <td>{note.hangtag}</td>
                         <td>{note.arrival}</td>
                         <td>{note.input}</td>
                         <td>{note.situation}</td>
-                        {userCanSeeDev && <td>
+                        <td>
                           <button
                             onClick={() => handleOpenNote(note.access_key)}
                             className="button_icon"
                           >
                             <i><UilSearchAlt className="table__icon" size="16" /></i>
                           </button>
-                        </td>}
+                        </td>
                       </tr>
                     )
                   })
@@ -196,7 +211,7 @@ export function Notes() {
             </button>
 
             <h2>Opções de notas</h2>
-            <p>Formato suportado: .xlsx</p>
+            <p>Formato suportado: .xlsx | Máximo de linhas: 900</p>
 
             <form onSubmit={handleInsertNotes}>
               <span>Inserir notas</span>
