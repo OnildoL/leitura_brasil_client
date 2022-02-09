@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { api } from "../../../services/api"
 import { ModalSector } from "../ModalSector";
-import { Sectors } from "./styles";
+import { Sectors, Summary } from "./styles";
 
 export function Manager({ store, store_name }) {
   const [inputYear, setInputYear] = useState("")
   const [consolidated, setConsolidated] = useState([])
+  const [totalizers, setTotalizers] = useState({})
 
   const [isSectorModalOpen, setIsSectorModalOpen] = useState(false)
   const [toSector, setToSector] = useState("")
@@ -24,7 +25,7 @@ export function Manager({ store, store_name }) {
   function handleSectorFiltering(sector) {
     setToSector(sector)
     
-    api.get("goals")
+    api.get(`goals/${store}`)
     .then(response => {
       let yearsSet = new Set()
       let years = []
@@ -46,12 +47,24 @@ export function Manager({ store, store_name }) {
             })
         }
       }
-
+      
       setSectors(years)
 
       handleOpenSectorModal()
     })
     .catch(error => console.log(error))
+  }
+
+  function handleSetTotalizers(data) {
+    const { goal, request, input } = data.reduce((accumulator, { goal, request, input }) => {
+      accumulator.goal = accumulator.goal + goal || goal
+      accumulator.request = accumulator.request + request || request
+      accumulator.input = accumulator.input + input || input
+
+      return accumulator
+    }, {})
+
+    setTotalizers({ goal, request, input })
   }
 
   function filtersConsolidatedBySector(consolidated) {
@@ -61,7 +74,6 @@ export function Manager({ store, store_name }) {
     for (const sector of sectors) {
       const totalBySector = []
       const result = consolidated.data.filter(data => data.sector === sector)
-
       const { goal } = result.reduce((accumulator, { goal }) => {
         accumulator.goal = accumulator.goal + Number(goal) || Number(goal)
         return accumulator
@@ -96,12 +108,15 @@ export function Manager({ store, store_name }) {
 
       totalsBySectors.push({
         id: v4(),
-        goal,
-        ...totalResultBySector
+        goal: goal ?? 0,
+        sector: totalResultBySector.sector ?? "",
+        request: totalResultBySector.request ?? 0,
+        input: totalResultBySector.input ?? 0,
       })
     }
-
+    
     setConsolidated(totalsBySectors)
+    handleSetTotalizers(totalsBySectors)
   }
 
   useEffect(() => {
@@ -184,8 +199,49 @@ export function Manager({ store, store_name }) {
                 )
               })
             }
+            <tr>
+              <td></td>
+              <td>
+                <strong>
+                  {
+                    new Intl.NumberFormat('pt-BR', {
+                      minimumFractionDigits: 0, 
+                      maximumFractionDigits: 0,
+                      style: 'currency',
+                      currency: 'BRL'
+                    }).format(totalizers.goal)
+                  }
+                </strong>
+              </td>
+              <td>
+                <strong>
+                  {
+                    new Intl.NumberFormat('pt-BR', {
+                      minimumFractionDigits: 0, 
+                      maximumFractionDigits: 0,
+                      style: 'currency',
+                      currency: 'BRL'
+                    }).format(totalizers.request)
+                  }
+                </strong>
+              </td>
+              <td>
+                <strong>
+                  {
+                    new Intl.NumberFormat('pt-BR', {
+                      minimumFractionDigits: 0, 
+                      maximumFractionDigits: 0,
+                      style: 'currency',
+                      currency: 'BRL'
+                    }).format(totalizers.input)
+                  }
+                </strong>
+              </td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
+
         <h3>Escolher ano</h3>
         <input 
           type="text" 

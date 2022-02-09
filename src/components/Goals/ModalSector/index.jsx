@@ -126,48 +126,13 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     }
   }
 
-  function filtersConsolidatedBySector({ response, sector }) {
-    const totalSector = []
-    const sectors = [sector]
-    
-    for (const sector of sectors) {
-      const result = response.data.filter(data => data.sector === sector)
+  function filtersConsolidatedBySector({ response }) {
+    const { goal, request, input, totalSector } = response.data
 
-      for (const goal_month of result) {
-        const { goal, id } = goal_month
+    setTotalSectorGoal(goal)
+    setTotalSectorRequest(request)
+    setTotalSectorInput(input)
 
-        const { request } = goal_month.requests.reduce((accumulator, { request_value }) => {
-        accumulator.request = accumulator.request + Number(request_value) || Number(request_value)
-        return accumulator
-        }, {})
-
-        const { note } = goal_month.notes.reduce((accumulator, { note_value }) => {
-        accumulator.note = accumulator.note + Number(note_value) || Number(note_value)
-        return accumulator
-        }, {})
-
-        totalSector.push({
-          id,
-          goal,
-          sector: sector,
-          month: goal_month.month,
-          request: request ?? 0,
-          input: note ?? 0
-        })
-      }
-
-      const { goal, request, input } = totalSector.reduce((accumulator, { goal, request, input }) => {
-        accumulator.goal = accumulator.goal + Number(goal) || Number(goal)
-        accumulator.request = accumulator.request + request || request
-        accumulator.input = accumulator.input + input || input
-
-        return accumulator
-      }, {})
-
-      setTotalSectorGoal(goal)
-      setTotalSectorRequest(request)
-      setTotalSectorInput(input)
-    }
     sortingMonthDefault("month", totalSector)
     setSectorTotalPerMonth(totalSector)
   }
@@ -216,9 +181,9 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
   }
 
   function handleOpenGoalsModal({ year, sector, store }) {
-    api.get(`/goals/consolidated/${year}/${store}`)
+    api.get(`/goals/consolidate/${year}/${store}/${sector}`)
       .then(response => {
-        filtersConsolidatedBySector({ response, sector })
+        filtersConsolidatedBySector({ response })
       })
       .catch(error => console.log(error))
 

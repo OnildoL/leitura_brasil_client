@@ -72,7 +72,7 @@ export function Goals() {
   function handleSectorFiltering(sector) {
     setToSector(sector)
 
-    api.get("goals")
+    api.get(`goals/${user.store}`)
     .then(response => {
       let yearsSet = new Set()
       let years = []

@@ -72,3 +72,18 @@ export const Sectors = styled.section`
     }
   }
 `
+
+export const Summary = styled.section`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+
+  font-size: 0.7rem;
+  text-align: left;
+  /* background: var(--background); */
+  
+  section {
+    background: var(--background);
+    
+  }
+`
