@@ -124,7 +124,7 @@ export function Goals() {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Já existe meta cadastrada!",
         })
       })
 

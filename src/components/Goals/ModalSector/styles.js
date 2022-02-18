@@ -58,14 +58,14 @@ export const Content = styled.div`
     border-radius: 0.25rem;
   }
   .button {
-    margin: 20px 5px 0;
+    margin: 1px 5px 0.51rem;
     font-size: 1rem;
     color: #FFFFFF;
     background: var(--blue);
     border: 0;
     padding:0 2rem;
     border-radius: 0.25rem;
-    height: 3rem;
+    height: 2rem;
 
     transition: 0.4s;
 
@@ -86,9 +86,46 @@ export const Content = styled.div`
 `
 export const Summary = styled.div`
   display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+
+  section {
+    text-align: center;
+    button {
+      width: 100%;
+    }
+  }
+
+  div {
+    width: auto;
+    background: var(--background);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    color: var(--text-title);
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    i {
+      font-size: 1.5rem;
+    }
+`
+export const SummaryConsolidation = styled.div`
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 1rem;
+
+  section {
+    text-align: center;
+    button {
+      width: 100%;
+    }
+  }
 
   div {
     width: auto;

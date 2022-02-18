@@ -1,7 +1,10 @@
 import Modal from "react-modal"
 import closeImg from "../../../assets/Img/close.svg"
+import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 
 export function Note({ isOpen, onRequestClose, note }) {
+  useWithSSRAuth()
+
   return (
     <>
       <Modal

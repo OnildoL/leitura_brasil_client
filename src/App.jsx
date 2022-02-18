@@ -7,6 +7,7 @@ import { Table } from "./components/Users/UsersTable"
 import { Login } from "./components/Login"
 import { Notes } from "./pages/Notes"
 import { Profiles } from "./pages/Profiles"
+import { Hits } from "./pages/Hits"
 
 export function App() {
   return (
@@ -33,6 +34,14 @@ export function App() {
             <>
               <Users />
               <Table />
+            </>
+          }
+        />
+        <Route
+          path="/hits" 
+          element={
+            <>
+              <Hits />
             </>
           }
         />

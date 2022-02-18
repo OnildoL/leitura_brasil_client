@@ -66,7 +66,7 @@ export function Users() {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Já existe usuário cadastrado!",
         })
       })
     

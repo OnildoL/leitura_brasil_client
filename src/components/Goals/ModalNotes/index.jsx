@@ -9,8 +9,10 @@ import { Container, FormContainer } from "./styles"
 import { api } from "../../../services/api"
 import { useNotification } from "../../../hooks/useNotification"
 import { usePermission } from "../../../hooks/usePermission"
+import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 
 export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, requestId }) {
+  useWithSSRAuth()
   const [goalId, setGoalId] = useState(0)
   const [requestName, setRequestName] = useState("")
   const [requestValue, setRequestValue] = useState("")
@@ -65,7 +67,7 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
     event.preventDefault()
 
     const data = { requests_inputs_id: requestId, access_key: accessKey }
-
+    
     api.put("requests/link", data)
       .then(response => {
         dispatch({
@@ -76,7 +78,7 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Chave de acesso inválida, inexistente ou vinculada a outro pedido!",
         })
       })
 
@@ -94,7 +96,7 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Erro interno ao tentar remover nota!",
         })
       })
 

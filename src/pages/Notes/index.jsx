@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
 import { useWithSSRAuth } from '../../utils/withSSRAuth';
-import { Container, Content } from "./styles"
+import { Container, Content, Pagination, TableContent } from "./styles"
 import { api } from "../../services/api";
 import { useNotification } from "../../hooks/useNotification";
 import { Note } from "./Note";
@@ -65,7 +65,7 @@ export function Notes() {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Arquivo ou formato inválido ou número máximo de linhas ultrapassado!",
         })
       })
 
@@ -78,14 +78,34 @@ export function Notes() {
     
     setNotes(filter)
   }
+  const [totalPages, setTotalPages] = useState(0)
+  const [page, setPage] = useState(1)
+
+  function nextPageNotes(pageNumber) {
+    setPage(pageNumber)
+    
+    api.get(`notes?page=${pageNumber}`)
+    .then(response => {
+      setNotes(response.data.notes)
+    })
+    .catch(error => {
+      dispatch({
+        type: "error",
+        message: "Erro interno ao consultar notas!",
+      })
+    })
+  }
 
   useEffect(() => {
     api.get("notes")
-      .then(response => setNotes(response.data))
+      .then(response => {
+        setTotalPages(parseInt(response.data.count))
+        setNotes(response.data.notes)
+      })
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Erro interno ao consultar notas!",
         })
       })
   }, [])
@@ -114,7 +134,7 @@ export function Notes() {
             </button>
           </section>
 
-          {userCanSeeDev && <div className="search panel">
+          {userCanSeeDev && <section className="search panel">
             <input 
               type="text" 
               placeholder="Pesquisar"
@@ -135,22 +155,22 @@ export function Notes() {
             >
               Pesquisar
             </button>
-          </div>}
+          </section>}
 
           <div>
-            <table>
+            <TableContent>
               <thead>
                 <tr>
+                  <th className="sticky-col first-col">Ações</th>
+                  <th className="sticky-col second-col">Número</th>
                   <th>Valor total</th>
-                  <th>Número</th>
                   <th>Emissão</th>
                   <th>Fornecedor</th>
                   <th>Receber</th>
                   <th>Etiqueta</th>
+                  <th>Frete</th>
                   <th>Chegou</th>
                   <th>Entrada</th>
-                  <th>Frete</th>
-                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,6 +178,15 @@ export function Notes() {
                   notes.map(note => {
                     return (
                       <tr key={note.id}>
+                        <td className="sticky-col first-col">
+                          <button
+                            onClick={() => handleOpenNote(note.access_key)}
+                            className="button_icon"
+                          >
+                            <i><UilSearchAlt className="table__icon" size="16" /></i>
+                          </button>
+                        </td>
+                        <td className="sticky-col second-col">{note.nf}</td>
                         <td>
                           {
                             new Intl.NumberFormat('pt-BR', {
@@ -166,7 +195,6 @@ export function Notes() {
                             }).format(note.value ?? 0)
                           }  
                         </td>
-                        <td>{note.nf}</td>
                         <td>
                           {
                             new Intl.DateTimeFormat('pt-BR', { 
@@ -177,23 +205,15 @@ export function Notes() {
                         <td className="defaul_field">{note.provider}</td>
                         <td>{note.receive}</td>
                         <td>{note.hangtag}</td>
+                        <td>{note.situation}</td>
                         <td>{note.arrival}</td>
                         <td>{note.input}</td>
-                        <td>{note.situation}</td>
-                        <td>
-                          <button
-                            onClick={() => handleOpenNote(note.access_key)}
-                            className="button_icon"
-                          >
-                            <i><UilSearchAlt className="table__icon" size="16" /></i>
-                          </button>
-                        </td>
                       </tr>
                     )
                   })
                 }
               </tbody>
-            </table>
+            </TableContent>
           </div>
         
           <Modal
@@ -246,6 +266,43 @@ export function Notes() {
           />
 
         </Content>
+
+        <Pagination>
+            <div>
+              Mostrando <strong>{`${(page * 15 - 15) + 1}`}</strong> - <strong>{`${page * 15 >= totalPages ? totalPages : page * 15}`}</strong> de <strong>{`${totalPages}`}</strong> notas totais
+              { page === 1
+              ?             
+              <button
+                onClick={() => nextPageNotes(page - 1)}
+                disabled
+              >
+                Anterior
+              </button>
+              :
+                <button
+                  onClick={() => nextPageNotes(page - 1)}
+                >
+                  Anterior
+                </button>
+              }
+              { page * 15 >= totalPages
+              ?             
+              <button
+                onClick={() => nextPageNotes(page + 1)}
+                disabled
+              >
+                Próxima
+              </button>
+              :
+                <button
+                  onClick={() => nextPageNotes(page + 1)}
+                >
+                  Próxima
+                </button>
+              }
+            </div>
+        </Pagination>
+
       </Container>
       <Footer />
     </>

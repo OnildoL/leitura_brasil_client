@@ -7,8 +7,10 @@ import closeImg from "../../../assets/Img/close.svg"
 
 import { Container, Content, FormContainer } from "./styles"
 import { useNotification } from "../../../hooks/useNotification"
+import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 
 export function Table() {
+  useWithSSRAuth()
   const [users, setUsers] = useState([])
   const dispatch = useNotification()
 
@@ -66,7 +68,7 @@ export function Table() {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Erro ao tentar atualizar informações do usuário!",
         })
       })
     

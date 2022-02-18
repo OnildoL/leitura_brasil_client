@@ -1,6 +1,9 @@
+import { useWithSSRAuth } from "../../utils/withSSRAuth"
 import { Container, Content } from "./styles"
 
 export function Footer() {
+  useWithSSRAuth()
+  
   return (
     <Container>
       <Content>

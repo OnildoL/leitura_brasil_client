@@ -269,10 +269,10 @@ export const GlobalStyle = createGlobalStyle`
   .react-modal-goal-note {
     width: 100%;
     max-width: 976px;
-    max-height: 576px;
+    max-height: 900px;
     overflow-y: scroll;
     background: var(--shape);
-    padding: 3rem;
+    padding: 2rem 5rem 2rem 5rem;
     position: relative;
     border-radius: 0.24rem;
 
@@ -341,21 +341,24 @@ export const GlobalStyle = createGlobalStyle`
 
   .react-modal-content-goals {
     width: 1120px;
-    max-height: 850px;
+    font-size: 0.8rem;
+    max-height: 900px;
     overflow-y: scroll;
     background: var(--shape);
-    padding: 5rem;
+    padding: 2rem 5rem 2rem 5rem;
     position: relative;
     border-radius: 0.24rem;
 
-    @media (max-width: 1440px) {
-      width: 900px;
-      max-height: 580px;
+    @media (max-width: 1366px) {
+      width: 1120px;
+      max-height: 600px;
     }
 
-    h2 {
-      margin-top: 1.2rem;
+    @media (min-width: 1440px) {
+      width: 1120px;
+      max-height: 880px;
     }
+
 
     table {
       width: 100%;

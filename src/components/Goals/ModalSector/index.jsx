@@ -4,13 +4,14 @@ import { v4 } from "uuid"
 import { UilSearchAlt, UilChartLine, UilExport, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
-import { Container, Content, FormContainer, Summary } from "./styles"
+import { Container, Content, FormContainer, Summary, SummaryConsolidation } from "./styles"
 import { api } from "../../../services/api"
 import { currency, currencyValue } from "../../../utils/masks"
 import { AuthContext } from "../../../contexts/AuthContext"
 import { useNotification } from "../../../hooks/useNotification"
 import { usePermission } from "../../../hooks/usePermission"
 import { ModalNotes } from "../ModalNotes"
+import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 
 const headers_requests = [
   { label: "Ano", key: "year" },
@@ -23,6 +24,7 @@ const headers_requests = [
 ]
 
 export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
+  useWithSSRAuth()
   const { user } = useContext(AuthContext)
   const dispatch = useNotification()
   const handleKeyUp = useCallback((e) => {
@@ -98,17 +100,17 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       setOrder("ASC")
     }
   }
-  const [goalSort, setGoalSort] = useState([])
-  const sortingMonthDefault = (col, data) => {
-    if (order === "ASC") {
-      const sorted = [...data].sort((a, b) => {
-        const a_month = findNumberMonth(monthNumber, a[col])
-        const b_month = findNumberMonth(monthNumber, b[col])
-        return a_month.monthNumber > b_month.monthNumber ? 1 : -1
-      })
-      setGoalSort(sorted)
-    }
-  }
+  // const [goalSort, setGoalSort] = useState([])
+  // const sortingMonthDefault = (col, data) => {
+  //   if (order === "ASC") {
+  //     const sorted = [...data].sort((a, b) => {
+  //       const a_month = findNumberMonth(monthNumber, a[col])
+  //       const b_month = findNumberMonth(monthNumber, b[col])
+  //       return a_month.monthNumber > b_month.monthNumber ? 1 : -1
+  //     })
+  //     setGoalSort(sorted)
+  //   }
+  // }
   const sortingNumber = (col) => {
     if (order === "ASC") {
       const sorted = [...requestsAndNotes].sort((a, b) => 
@@ -133,7 +135,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     setTotalSectorRequest(request)
     setTotalSectorInput(input)
 
-    sortingMonthDefault("month", totalSector)
+    // sortingMonthDefault("month", totalSector)
     setSectorTotalPerMonth(totalSector)
   }
 
@@ -298,7 +300,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Erro interno ao tentar puxar notas vinculadas ao pedido!",
         })
         setNotes([])
         handleOpenNotesModal()
@@ -390,16 +392,6 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
 
         <Container>
           <Content>
-            {sectors[0]?.store === user?.store && userCanSeeAdmin && <button
-              className="button"
-              onClick={handleOpenNewRequestModal}
-              type="button"
-            >
-              <i className="table__icon"><UilShoppingCartAlt size="16"/></i>
-              Novo pedido
-            </button>}
-
-            <h2>METAS {sector?.toUpperCase()}</h2>
 
             <table>
               <thead>
@@ -413,7 +405,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </thead>
               <tbody>
                 {
-                  goalSort.map(sector => {
+                  sectorTotalPerMonth.map(sector => {
                     return (
                       <tr key={sector.id}>
                         <td>{sector.month}</td>
@@ -464,6 +456,24 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
             </table>
 
             <Summary>
+              <section>
+                {
+                  sectors[0]?.store === user?.store && userCanSeeAdmin && <button
+                  className="button"
+                  onClick={handleOpenNewRequestModal}
+                  type="button"
+                >
+                  <i className="table__icon"><UilShoppingCartAlt size="16"/></i>
+                  Novo pedido
+                </button>
+                }
+                <span>
+                  <CSVLink {...csvReportRequests}>
+                    <UilExport />
+                    Exportar CSV
+                  </CSVLink>
+                </span>
+              </section>
               <div>
                 <header>
                   <p>Total metas</p>
@@ -508,8 +518,6 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </div>
             </Summary>
             
-            <h2>PEDIDOS {sector?.toUpperCase()}</h2>
-            
             {userCanSeeDev && <div className="search">
               <input type="text" placeholder="Pesquisar" /> 
               <select>
@@ -524,13 +532,6 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </button>
             </div>}
 
-            <div>
-              <CSVLink {...csvReportRequests}>
-                <UilExport />
-                Exportar CSV
-              </CSVLink>
-            </div>
-            
             <table>
               <thead>
                 <tr>
@@ -663,7 +664,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </tbody>
             </table>
 
-            <Summary>
+            <SummaryConsolidation>
               <div>
                 <header>
                   <p>Total metas</p>
@@ -706,7 +707,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                   }).format(consolidation.totals?.input)}
                 </strong>
               </div>
-            </Summary>
+            </SummaryConsolidation>
             
           </Content>
         </Container>

@@ -34,7 +34,7 @@ export function Profiles() {
       .catch(error => {
         dispatch({
           type: "error",
-          message: error.response.data.message,
+          message: "Senha inválida!",
         })
       })
 

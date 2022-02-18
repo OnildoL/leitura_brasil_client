@@ -5,8 +5,10 @@ import { Link } from "react-router-dom"
 import { AuthContext, signOut } from "../../contexts/AuthContext"
 import { useContext } from "react"
 import { usePermission } from "../../hooks/usePermission"
+import { useWithSSRAuth } from '../../utils/withSSRAuth'
 
 export function Header() {
+  useWithSSRAuth()
   const { user } = useContext(AuthContext)
 
   const { userCanSeeDev } = usePermission()
@@ -47,12 +49,12 @@ export function Header() {
                 <Link to="/goals">
                   metas de compra e pedidos
                 </Link>
-                <Link to="#"> {/* /hits */}
+                <Link to="/hits">
                   acertos
                 </Link>
-                <Link to="#"> {/* /devolutions */}
+                {/* <Link to="/devolutions">
                   devoluções
-                </Link>
+                </Link> */}
               </ul>
             </li>
 
@@ -62,12 +64,12 @@ export function Header() {
                 <Link to="/notes">
                   notas e produtos
                 </Link>
-                <Link to="#"> {/* /missings */}
+                {/* <Link to="/missings">
                   faltantes e divergências
                 </Link>
-                <Link to="#"> {/* /reports */}
+                <Link to="/reports">
                   controle de relatórios
-                </Link>
+                </Link> */}
               </ul>
             </li>
 
@@ -77,9 +79,6 @@ export function Header() {
                 <Link to="/profiles">
                   perfil
                 </Link>
-                <li>
-                  Ajuda
-                </li>
                 <li onClick={logOut}>
                   sair
                 </li>

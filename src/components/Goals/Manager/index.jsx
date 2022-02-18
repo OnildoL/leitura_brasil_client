@@ -2,10 +2,12 @@ import { UilSearchAlt } from '@iconscout/react-unicons'
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { api } from "../../../services/api"
+import { useWithSSRAuth } from '../../../utils/withSSRAuth';
 import { ModalSector } from "../ModalSector";
-import { Sectors, Summary } from "./styles";
+import { Sectors } from "./styles";
 
 export function Manager({ store, store_name }) {
+  useWithSSRAuth()
   const [inputYear, setInputYear] = useState("")
   const [consolidated, setConsolidated] = useState([])
   const [totalizers, setTotalizers] = useState({})

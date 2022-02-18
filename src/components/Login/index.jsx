@@ -27,6 +27,13 @@ export function Login() {
 
     const response = await signIn(data)
 
+    if (!response) {
+      dispatch({
+        type: "error",
+        message: `Usuário ou senha inválidos!`,
+      })
+    }
+
     if (response) {
       navigate("/main")
 
