@@ -6,9 +6,13 @@ import closeImg from "../../../assets/Img/close.svg"
 import { currency, currencyValue } from "../../../utils/masks"
 import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 import { Container, FormContainer, SituationTypeContainer, RadioBox } from "./styles"
+import { useNotification } from "../../../hooks/useNotification"
+import { api } from "../../../services/api"
 
 export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote }) {
   useWithSSRAuth()
+
+  const dispatch = useNotification()
 
   const [lastHit, setLastHit] = useState("")
   const [currentHit, setCurrentHIt] = useState("")
@@ -25,7 +29,8 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
   function handleUpdateHit(event) {
     event.preventDefault()
 
-    const update = { 
+    const update = {
+      id: datahit.id,
       last_hit: !lastHit ? datahit.last_hit : lastHit, 
       current_hit: !currentHit ? datahit.current_hit : currentHit, 
       sales_report: !salesReport ? datahit.sales_report : currencyValue(salesReport), 
@@ -34,14 +39,23 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
       situation: !situationTypeHit ? datahit.comments : situationTypeHit,
     }
 
-    setLastHit("")
-    setCurrentHIt("")
-    setSalesReport("")
-    setValueNerus("")
-    setComments("")
-    setSituationTypeHit("")
-
-    onRequestClose()
+    api.put("hits", update)
+      .then(response => {
+        setLastHit("")
+        setCurrentHIt("")
+        setSalesReport("")
+        setValueNerus("")
+        setComments("")
+        setSituationTypeHit("")
+    
+        onRequestClose()
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: `Erro interno ao tentar atualizar dados!`,
+        })
+      })
   }
 
   return (
