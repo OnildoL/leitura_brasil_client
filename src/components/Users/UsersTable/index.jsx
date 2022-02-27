@@ -1,5 +1,5 @@
 import Modal from "react-modal"
-import { UilPen } from '@iconscout/react-unicons'
+import { UilEdit } from '@iconscout/react-unicons'
 import { api } from "../../../services/api"
 import { useEffect, useState } from "react"
 
@@ -127,7 +127,7 @@ export function Table() {
                       onClick={() => handleUserSelect(user.user)}
                         type="button"
                       >
-                        <i><UilPen size="16"/></i>
+                        <i><UilEdit size="16"/></i>
                       </button>
                     </td>
                   </tr>

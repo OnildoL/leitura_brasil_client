@@ -46,26 +46,6 @@ export const Content = styled.div`
     margin: 2rem 0 2rem;
   }
 
-  .sticky-col {
-    position: sticky;
-    position: -webkit-sticky;
-    background: var(--shape);
-  }
-
-  .first-col {
-    width: 100px;
-    min-width: 100px;
-    max-width: 100px;
-    left: 0px;
-  }
-
-  .second-col {
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-    left: 100px;
-  }
-
   .button_icon {
     border: 0;
     font-size: 1rem;
@@ -75,6 +55,28 @@ export const Content = styled.div`
     i {
       color: var(--blue);
     }
+  }
+  .button {
+      margin: 20px 5px 0;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: var(--blue);
+      border: 0;
+      padding:0 2rem;
+      border-radius: 0.25rem;
+      height: 3rem;
+
+      transition: 0.4s;
+
+      &:hover {
+        background: var(--blue-light);
+      }
+    }
+  .panel {
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    background: #FFFFFF;
   }
 `
 
@@ -89,7 +91,7 @@ export const TableContent = styled.table`
   
   tbody > tr {
     background: var(--shape);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); */
   }
 
   th {
@@ -106,5 +108,14 @@ export const TableContent = styled.table`
     font-size: 0.8em;
     padding: 0 1rem 0;
     color: var(--text-body);
+  }
+
+  .ok {
+    color: #33CC95;
+    font-weight: 600;
+  }
+  .duvida {
+    color: #CC3333;
+    font-weight: 600;
   }
 `

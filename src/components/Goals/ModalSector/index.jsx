@@ -1,7 +1,7 @@
 import Modal from "react-modal"
 import { CSVLink } from "react-csv"
 import { v4 } from "uuid"
-import { UilSearchAlt, UilChartLine, UilExport, UilPen, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
+import { UilSearchAlt, UilChartLine, UilExport, UilEdit, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
 import { Container, Content, FormContainer, Summary, SummaryConsolidation } from "./styles"
@@ -445,7 +445,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                             onClick={() => handleOpenUpdateGoalModal(sector.id)}
                             type="button"
                           >
-                            <i><UilPen size="16"/></i>
+                            <i><UilEdit size="16"/></i>
                           </button>
                         </td>}
                       </tr>
@@ -469,7 +469,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                 }
                 <span>
                   <CSVLink {...csvReportRequests}>
-                    <UilExport />
+                    <i className="table__icon"><UilExport size="16"/></i>
                     Exportar CSV
                   </CSVLink>
                 </span>
@@ -518,7 +518,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               </div>
             </Summary>
             
-            {userCanSeeDev && <div className="search">
+            {/* {userCanSeeDev && <div className="search">
               <input type="text" placeholder="Pesquisar" /> 
               <select>
                 <option value="">-- Escolher coluna --</option>
@@ -530,7 +530,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
               >
                 Pesquisar
               </button>
-            </div>}
+            </div>} */}
 
             <table>
               <thead>

@@ -174,6 +174,71 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
   }
+
+  .react-modal-content-hits {
+    width: 100%;
+    font-size: 0.8rem;
+    max-width: 1576px;
+    max-height: 900px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 2rem 5rem 2rem 5rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    @media (max-width: 1366px) {
+      width: 1120px;
+      max-height: 600px;
+    }
+
+    @media (min-width: 1440px) {
+      width: 1120px;
+      max-height: 880px;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem 1rem;
+        text-align: left;
+        line-height: 1.5rem;
+        cursor: pointer;
+
+        @media (max-width: 1440px) {
+          padding: 0;
+        }
+      }
+
+      td {
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text-body);
+      }
+    }
+
+    .button_icon {
+      button {
+        border: 0;
+        font-size: 1rem;
+        margin-right: 10px;
+        background: none;
+
+        i {
+          color: var(--blue);
+        }
+      }
+    }
+  }
+
   .react-modal-content-note {
     width: 100%;
     max-width: 576px;
@@ -264,6 +329,54 @@ export const GlobalStyle = createGlobalStyle`
       &:hover {
         background: var(--blue-light);
       }
+    }
+  }
+  .react-modal-goal-hit {
+    width: 100%;
+    max-width: 976px;
+    max-height: 900px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 2rem 5rem 2rem 5rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    @media (max-width: 1440px) {
+      max-width: 850px;
+      max-height: 550px;
+    }
+
+    h2 {
+      margin: 1rem 0 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        border: 0;
+        color: var(--text-body);
+      }
+    }
+
+    .buttonTrashAlt {
+      color: var(--blue);
+      background: none;
+      border: 0;
+      border-radius: 0.25rem;
     }
   }
   .react-modal-goal-note {

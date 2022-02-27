@@ -134,7 +134,7 @@ export function Notes() {
             </button>
           </section>
 
-          {userCanSeeDev && <section className="search panel">
+          {/* {userCanSeeDev && <section className="search panel">
             <input 
               type="text" 
               placeholder="Pesquisar"
@@ -155,7 +155,7 @@ export function Notes() {
             >
               Pesquisar
             </button>
-          </section>}
+          </section>} */}
 
           <div>
             <TableContent>
