@@ -225,6 +225,23 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
+    .button {
+      margin: 1rem 1rem 0 0;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: var(--blue);
+      border: 0;
+      padding:0 2rem;
+      border-radius: 0.25rem;
+      height: 3rem;
+
+      transition: 0.4s;
+
+      &:hover {
+        background: var(--blue-light);
+      }
+    }
+
     .button_icon {
       button {
         border: 0;

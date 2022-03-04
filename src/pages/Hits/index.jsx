@@ -1,7 +1,13 @@
 import Modal from "react-modal"
 import { CSVLink } from "react-csv"
-import { UilFileCheckAlt, UilExport, UilSearchAlt, UilSetting, UilDollarAlt, UilPlusCircle, UilBars, UilEdit } from '@iconscout/react-unicons'
-import { useEffect, useState } from 'react'
+import { 
+  UilFileCheckAlt, 
+  UilExport, 
+  UilSearchAlt, 
+  UilSetting, 
+  UilDollarAlt, 
+  UilPlusCircle, UilSync, UilEdit } from '@iconscout/react-unicons'
+import { useContext, useEffect, useState } from 'react'
 import { Footer } from "../../components/Footer"
 import { Header } from "../../components/Header"
 import { useNotification } from '../../hooks/useNotification'
@@ -11,6 +17,9 @@ import { Container, Content, TableContent } from "./styles"
 
 import closeImg from "../../assets/Img/close.svg"
 import { ModalNotesEndHitEdit } from "./ModalNotesEndHitEdit"
+import { ModalProvider } from "./ModalProvider"
+import { ModalEditProvider } from "./ModalEditProvider"
+import { AuthContext } from "../../contexts/AuthContext"
 
 const headers_requests = [
   { label: "Ano", key: "year" },
@@ -26,9 +35,14 @@ const headers_requests = [
 
 export function Hits() {
   useWithSSRAuth()
+
+  const { user } = useContext(AuthContext)
+
   const dispatch = useNotification()
   const [hitsModalOpen, setHitsModalOpen] = useState(false)
+  const [isProviderEditionModalOpen, setIsProviderEditionModalOpen] = useState(false)
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
+  const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [providers, setProviders] = useState([])
   const [providerId, setProviderId] = useState(0)
   const [provider, setProvider] = useState("")
@@ -36,6 +50,17 @@ export function Hits() {
   const [viewhitNote, setViewhitNOte] = useState([])
   const [hit, setHit] = useState([])
 
+  // Edita editora com informações por loja
+  const [providersId, setProvidersId] = useState({})
+
+  function handleOpenProviderModal() {
+    setProviderModalOpen(true)
+  }
+
+  function handleCloseProviderModal() {
+    setProviderModalOpen(false)
+  }
+  
   function handleOpenHitsModal(provider_id, provider) {
     setProviderId(provider_id)
     setProvider(provider)
@@ -73,6 +98,63 @@ export function Hits() {
     setHits(hits)
   }
 
+  function handleCreateNewHit() {
+    const getMonthText = monthNumber => ({
+      "1": "JAN", "2": "FEV", "3": "MAR", "4": "ABR", "5": "MAI", "6": "JUN", 
+      "7": "JUL", "8": "AGO", "9": "SET", "10": "OUT", "11": "NOV", "12": "DEZ",
+    })[monthNumber]
+
+    const lastHit = hits[0]
+
+    const new_hit = {
+      situation: "-",
+      month: getMonthText(`${new Date().getMonth() + 1}`),
+      year: new Date().getFullYear(),
+      last_hit: !lastHit ? "" : lastHit.last_hit,
+      store: user.store,
+      providers_info_id: providerId
+    }
+
+    api.post("hits", new_hit)
+      .then(response => {
+          api.get(`hits/${new_hit.providers_info_id}`)
+          .then(response => {
+            listHits(response)
+          })
+          .catch(error => {
+            setHits([])
+            dispatch({
+              type: "error",
+              message: `Editora ${provider} sem acertos!`,
+            })
+          })
+        dispatch({
+          type: "success",
+          message: "Novo acerto cadastrado com sucesso!",
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Já existe acerto cadastrado para esse mês/ano!",
+        })
+      })
+  }
+
+  function handleOpenProviderEditionModal() {
+    setIsProviderEditionModalOpen(true)
+  }
+
+  function handleCloseProviderEditionModal() {
+    setIsProviderEditionModalOpen(false)
+  }
+
+  // Edita editora com informações por loja
+  function handleEditionProviderInfo(provider) {
+    setProvidersId(provider)
+    handleOpenProviderEditionModal()
+  }
+
   function handleOpenNotesModal() {
     setIsNotesModalOpen(true)
   }
@@ -85,6 +167,58 @@ export function Hits() {
     setViewhitNOte(hit.notes)
     handleOpenNotesModal()
   }
+  
+  const csvReportRequests = {
+    filename: `${Date.now()}.csv`,
+    headers: headers_requests,
+    data: hits,
+    separator: ";"
+  }
+
+  const [hitList, setHitList] = useState("yes")
+
+  function handleChange(event) {
+    setHitList(event.target.value)
+
+    api.get(`providers/${event.target.value}`)
+      .then(response => {
+        setProviders(response.data)
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Erro interno ao consultar editoras!",
+        })
+      })
+  }
+
+  function handleReloadPageProviders() {
+    api.get(`providers/${hitList}`)
+      .then(response => {
+        setProviders(response.data)
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Erro interno ao consultar editoras!",
+        })
+      })
+  }
+  
+  function handleReloadPageHits() {
+    api.get(`hits/${providerId}`)
+      .then(response => {
+        listHits(response)
+      })
+      .catch(error => {
+        setHits([])
+        dispatch({
+          type: "error",
+          message: `Editora ${provider} sem acertos!`,
+        })
+      })
+  }
+
 
   useEffect(() => {
     api.get(`hits/${providerId}`)
@@ -99,9 +233,9 @@ export function Hits() {
       })
     })
   }, [providerId])
-
+  
   useEffect(() => {
-    api.get("providers")
+    api.get(`providers/${hitList}`)
       .then(response => {
         setProviders(response.data)
       })
@@ -112,13 +246,6 @@ export function Hits() {
         })
       })
   }, [])
-
-  const csvReportRequests = {
-    filename: `${Date.now()}.csv`,
-    headers: headers_requests,
-    data: hits,
-    separator: ";"
-  }
 
   return (
     <>
@@ -140,10 +267,12 @@ export function Hits() {
             </h1>
             <button
               className="button"
-              title="Outras opções"
+              onClick={() => handleReloadPageProviders()}
+              title="Atualizar listagem das editoras"
               type="button"
             >
-              <i className="table__icon"><UilBars size="16" /></i>
+              <i className="table__icon"><UilSync size="16" /></i>
+              Atualizar
             </button>
             <button
               className="button"
@@ -155,6 +284,7 @@ export function Hits() {
             </button>
             <button
               className="button"
+              onClick={() => handleOpenProviderModal()}
               title="Cadastrar uma nova editora"
               type="button"
             >
@@ -162,6 +292,20 @@ export function Hits() {
               Nova editora
             </button>
           </section>
+
+          <div>
+            <span>Listar por: </span>
+
+            <input type="radio" id="activated" name="providers" value="yes"
+              onChange={handleChange}
+            />
+            <label htmlFor="activated">Ativadas</label>
+
+            <input type="radio" id="deactivated" name="providers" value="no"
+              onChange={handleChange}
+            />
+            <label htmlFor="deactivated">Desativadas</label>
+          </div>
 
           <div>
             <TableContent>
@@ -191,6 +335,7 @@ export function Hits() {
                             <i><UilSearchAlt className="button_icon" size="16" /></i>
                           </button>
                           <button
+                            onClick={() => handleEditionProviderInfo(provider)}
                             title="Editar dados da editora"
                             className="button_icon"
                           >
@@ -225,8 +370,27 @@ export function Hits() {
             >
               <img src={closeImg} alt="Fechar modal" />
             </button>
+            <button
+              className="button"
+              onClick={() => handleReloadPageHits()}
+              title="Atualizar listagem de acertos"
+              type="button"
+            >
+              <i className="table__icon"><UilSync size="16" /></i>
+              Atualizar
+            </button>
+
+            <button
+              className="button"
+              onClick={() => handleCreateNewHit()}
+              title="Cadastrar um novo pedido"
+              type="button"
+            >
+              <i className="table__icon"><UilPlusCircle size="16" /></i>
+              Novo acerto
+            </button>
             
-            <h1>EDITORA {provider?.toUpperCase()}</h1>
+            <h1>EDITORA {provider?.toUpperCase()}</h1>            
 
             <div>
               <span>
@@ -322,6 +486,17 @@ export function Hits() {
         onRequestClose={handleCloseNotesModal}
         datahit={hit}
         hitNote={viewhitNote}
+      />
+      
+      <ModalEditProvider
+        isOpen={isProviderEditionModalOpen}
+        onRequestClose={handleCloseProviderEditionModal}
+        provider={providersId}
+      />
+
+      <ModalProvider
+        isOpen={providerModalOpen}
+        onRequestClose={handleCloseProviderModal}
       />
       <Footer />
     </>

@@ -44,6 +44,10 @@ export const Content = styled.div`
     max-height: 500px;
     overflow-x: scroll;
     margin: 2rem 0 2rem;
+
+    input {
+      margin: 0rem 0.5rem;
+    }
   }
 
   .button_icon {

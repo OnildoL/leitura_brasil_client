@@ -29,14 +29,16 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
   function handleUpdateHit(event) {
     event.preventDefault()
 
+    const date = new Intl.DateTimeFormat("pt-BR").format(new Date())
+
     const update = {
       id: datahit.id,
       last_hit: !lastHit ? datahit.last_hit : lastHit, 
       current_hit: !currentHit ? datahit.current_hit : currentHit, 
       sales_report: !salesReport ? datahit.sales_report : currencyValue(salesReport), 
-      value_nerus: !valueNerus ? datahit.value_nerus : currencyValue(valueNerus), 
-      comments: !comments ? datahit.comments : comments,
-      situation: !situationTypeHit ? datahit.comments : situationTypeHit,
+      value_nerus: !valueNerus ? datahit.value_nerus : currencyValue(valueNerus),
+      comments: !comments ? datahit.comments : `${datahit.comments ?? "-" }\n${date}: ${comments}`,
+      situation: !situationTypeHit ? datahit.situation : situationTypeHit,
     }
 
     api.put("hits", update)
@@ -49,6 +51,11 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
         setSituationTypeHit("")
     
         onRequestClose()
+
+        dispatch({
+          type: "success",
+          message: `Acerto atualizado com sucesso!`,
+        })
       })
       .catch(error => {
         dispatch({
@@ -84,19 +91,19 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
           <FormContainer onSubmit={handleUpdateHit}>
             <h2>Editar acerto</h2>
            
-            <div>Último acerto</div>
+            <div title={datahit.last_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Último acerto</div>
             
             <input 
               type="date"
-              defaultValue={datahit.last_hit}
+              // defaultValue={datahit.last_hit}
               onChange={event => setLastHit(event.target.value)}
             />
 
-            <div>Acerto atual</div>
+            <div title={datahit.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Acerto atual</div>
 
             <input 
               type="date"
-              defaultValue={datahit.current_hit}
+              // defaultValue={datahit.current_hit}
               onChange={event => setCurrentHIt(event.target.value)}
             />
 
@@ -106,9 +113,9 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
               type="text"
               onKeyUp={handleKeyUp}
               maxLength={10}
-              defaultValue={datahit.sales_report}
+              // defaultValue={datahit.sales_report}
               onChange={event => setSalesReport(event.target.value)}
-              placeholder="Valor vendas"
+              placeholder={datahit.sales_report ?? 0}
             />
             
             <div>Valor nerus</div>
@@ -117,11 +124,14 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
               type="text"
               onKeyUp={handleKeyUp}
               maxLength={10}
-              defaultValue={datahit.value_nerus}
+              // defaultValue={datahit.value_nerus}
               onChange={event => setValueNerus(event.target.value)}
-              placeholder="Valor nerus"
+              placeholder={datahit.value_nerus ?? 0}
             />
-            <div>Situação: <span className={datahit.situation}>{datahit.situation?.toUpperCase()}</span></div>
+            <div>
+              Situação:&nbsp;
+              <span className={datahit.situation}>{datahit.situation?.toUpperCase()}</span>
+            </div>
             <SituationTypeContainer>
               <RadioBox
                 type="button"
@@ -143,13 +153,13 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
               </RadioBox>
             </SituationTypeContainer>
 
-            <div>Observações</div>
+            <div title={datahit.comments}>Observações</div>
 
             <textarea 
               type="text"
-              defaultValue={datahit.comments}
+              // defaultValue={datahit.comments}
               onChange={event => setComments(event.target.value)}
-              placeholder="Observações"
+              placeholder={datahit.comments ?? "Digite aqui..."}
             />
 
             <button type="submit">
