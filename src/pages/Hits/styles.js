@@ -6,7 +6,7 @@ export const Container = styled.main`
   margin-top: 3.5rem;
 
   @media (max-width: 1440px) {
-    max-width: 900px;
+    max-width: 1000px;
   }
 `
 
@@ -42,7 +42,6 @@ export const Content = styled.div`
 
   div {
     max-height: 500px;
-    overflow-x: scroll;
     margin: 2rem 0 2rem;
 
     input {
@@ -86,7 +85,7 @@ export const Content = styled.div`
 
 export const TableContent = styled.table`
   width: 1120px;
-
+  margin-bottom: 4rem;
   border-spacing: 0 0.2rem;
 
   @media (max-width: 1440px) {
@@ -102,16 +101,15 @@ export const TableContent = styled.table`
     margin: 0 2rem 0 2rem;
     padding: 0 2rem 0 2rem;
     color: var(--text-body);
+    white-space: nowrap;
     font-weight: 400;
     text-align: left;
     line-height: 1.5rem;
   }
 
   td {
-    white-space: nowrap;
     font-size: 0.8em;
     padding: 0 1rem 0;
-    color: var(--text-body);
   }
 
   .ok {

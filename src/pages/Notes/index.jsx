@@ -38,9 +38,8 @@ export function Notes() {
     setOptionsModalOpen(false)
   }
 
-  function handleOpenNote(access_key) {
-    // Fazer em breve!
-    setNote(access_key)
+  function handleOpenNote(note) {
+    setNote(note)
 
     setNoteModalOpen(true)
   }
@@ -180,7 +179,7 @@ export function Notes() {
                       <tr key={note.id}>
                         <td className="sticky-col first-col">
                           <button
-                            onClick={() => handleOpenNote(note.access_key)}
+                            onClick={() => handleOpenNote(note)}
                             className="button_icon"
                           >
                             <i><UilSearchAlt className="table__icon" size="16" /></i>
@@ -206,8 +205,8 @@ export function Notes() {
                         <td>{note.receive}</td>
                         <td>{note.hangtag}</td>
                         <td>{note.situation}</td>
-                        <td>{note.arrival}</td>
-                        <td>{note.input}</td>
+                        <td>{note.arrival?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}</td>
+                        <td>{note.input?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}</td>
                       </tr>
                     )
                   })

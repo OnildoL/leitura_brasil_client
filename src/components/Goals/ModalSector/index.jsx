@@ -1,7 +1,7 @@
 import Modal from "react-modal"
 import { CSVLink } from "react-csv"
 import { v4 } from "uuid"
-import { UilSearchAlt, UilChartLine, UilExport, UilEdit, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
+import { UilSearchAlt, UilChartLine, UilTrashAlt, UilExport, UilEdit, UilUsdCircle, UilShoppingCartAlt } from '@iconscout/react-unicons'
 import { useCallback, useContext, useState } from "react"
 import closeImg from "../../../assets/Img/close.svg"
 import { Container, Content, FormContainer, Summary, SummaryConsolidation } from "./styles"
@@ -145,20 +145,24 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       for (const request of request_note.requests) {
         const note = request_note.notes
           .filter(note => note.requests_inputs_id === request.request_id)
-          .reduce((accumulator, { note_value, nf, issue, note_id, requests_inputs_id }) => {
+          .reduce((accumulator, { note_value, issue, note_id, requests_inputs_id }) => {
             accumulator.note_value = accumulator.note_value + Number(note_value) || Number(note_value)
             accumulator.requests_inputs_id = requests_inputs_id
             accumulator.note_id = note_id
-            accumulator.nf = nf
             accumulator.issue = issue
     
             return accumulator
           }, {})
-          // .sort(function(a, b){ return Number(b.note_value) - Number(a.note_value) })[0] // Para pegar apenas o valor total da nota de maior valor
-        
+
+        const nf = request_note.notes
+          .filter(note => note.requests_inputs_id === request.request_id)
+          .sort(function(a, b) { return Number(b.note_value) - Number(a.note_value) })[0]
+
         requestNotes.push({
           id: v4(),
           year: request_note.year,
+          nf: !nf ? "" : nf.nf,
+          input: !nf ? "" : nf.input,
           ...request,
           ...note
         })
@@ -182,13 +186,16 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
     setIsConsolidatedModalOpen(false)
   }
 
+  const [dataSelected, setDataSelected] = useState({})
+
   function handleOpenGoalsModal({ year, sector, store }) {
     api.get(`/goals/consolidate/${year}/${store}/${sector}`)
       .then(response => {
         filtersConsolidatedBySector({ response })
       })
       .catch(error => console.log(error))
-
+    
+    setDataSelected({ year, sector, store })
     api.get(`/goals/consolidated/${year}/${store}/${sector}`)
       .then(response => listRequestsAndNotes(response))
       .catch(error => console.log(error))
@@ -307,6 +314,60 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
       })
   }
 
+  function handleRemoveRequest(request_id) {
+    const reallyWantoRemove = window.confirm("Deseja realmente remover esse pedido?")
+    const { year, store, sector } = dataSelected
+
+    const data = { id: request_id }
+
+    if (reallyWantoRemove) {
+      api.put(`requests/remove/request`, data)
+      .then(response => {
+
+        api.get(`/goals/consolidate/${year}/${store}/${sector}`)
+          .then(response => filtersConsolidatedBySector({ response }))
+          .catch(error => console.log(error))
+
+        api.get(`/goals/consolidated/${year}/${store}/${sector}`)
+          .then(response => listRequestsAndNotes(response))
+          .catch(error => console.log(error))
+
+        dispatch({
+          type: "success",
+          message: "Pedido removido com sucesso!",
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Falha ao tentar remover o pedido, verifique se existe nota vinculada!",
+        })
+      })
+    }
+  }
+
+  function handleRemoveGoal(goal_id) {
+    const reallyWantoRemove = window.confirm("Deseja realmente remover essa meta?")
+
+    const data = { id: goal_id }
+
+    if (reallyWantoRemove) {
+      api.put("goals/remove", data)
+        .then(response => {
+          dispatch({
+            type: "success",
+            message: "Meta removida com sucesso!",
+          })
+        })
+        .catch(error => {
+          dispatch({
+            type: "error",
+            message: "Erro ao tentar remover a meta, verificar se existe pedidos vinculados!",
+          })
+        })
+    }
+  }
+
   const csvReportRequests = {
     filename: `${Date.now()}.csv`,
     headers: headers_requests,
@@ -342,7 +403,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
           </thead>
           <tbody>
             {
-              sectors.map(sector => {
+              sectors.sort((a, b) => parseInt(a.year) < parseInt(b.year) ? 1 : -1).map(sector => {
                 return (
                   <tr key={sector.id}>
                     <td>{sector.year}</td>
@@ -447,6 +508,13 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                           >
                             <i><UilEdit size="16"/></i>
                           </button>
+                          <button
+                            className="button_icon"
+                            onClick={() => handleRemoveGoal(sector.id)}
+                            type="button"
+                          >
+                            <i><UilTrashAlt size="16"/></i>
+                          </button>
                         </td>}
                       </tr>
                     )
@@ -541,6 +609,7 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                   <th onClick={() => sortingNumber("note_value")}>Valor Nota</th>
                   <th onClick={() => sortingNumber("nf")}>Número</th>
                   <th>Emissão</th>
+                  <th>Entrada</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -576,6 +645,11 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                           }
                         </td>
                         <td>
+                          {
+                            request_note.input?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")
+                          }
+                        </td>
+                        <td>
                           <button
                             className="button_icon"
                             onClick={() => viewNote(request_note)}
@@ -583,6 +657,13 @@ export function ModalSector({ isOpen, onRequestClose, sector, sectors }) {
                           >
                             <i><UilSearchAlt size="16"/></i>
                           </button>
+                          {userCanSeeAdmin && <button
+                            className="button_icon"
+                            onClick={() => handleRemoveRequest(request_note.request_id)}
+                            type="button"
+                          >
+                            <i><UilTrashAlt size="16"/></i>
+                          </button>}
                         </td>
                       </tr>
                     )

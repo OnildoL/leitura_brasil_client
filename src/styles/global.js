@@ -348,19 +348,120 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
   }
-  .react-modal-goal-hit {
+  .react-modal-goal-hit-link {
     width: 100%;
+    font-size: 0.8rem;
     max-width: 976px;
     max-height: 900px;
     overflow-y: scroll;
     background: var(--shape);
-    padding: 2rem 5rem 2rem 5rem;
+    padding: 1rem 5rem 2rem 5rem;
     position: relative;
     border-radius: 0.24rem;
 
-    @media (max-width: 1440px) {
+    @media (max-width: 1366px) {
       max-width: 850px;
       max-height: 550px;
+    }
+
+    @media (max-width: 1440px) {
+      max-width: 850px;
+      max-height: 650px;
+    }
+
+    h2 {
+      margin: 1rem 0 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        border: 0;
+        color: var(--text-body);
+      }
+    }
+    .button {
+      width: 100%;
+      margin: 0.2rem 0 0.2rem;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: var(--blue);
+      border: 0;
+      padding:0 2rem;
+      border-radius: 0.25rem;
+      height: 3rem;
+
+      transition: 0.3s;
+
+      &:hover {
+        background: var(--blue-light);
+      }
+    }
+    .input {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0 1.5rem;
+      height: 2rem;
+      border-radius: 0.25rem;
+
+      border: 1px solid #D7D7D7;
+      background: #E7E9EE;
+
+      font-weight: 400;
+      font-size: 1rem;
+
+      &::placeholder {
+        color: var(--text-body);
+      }
+
+      & + input {
+        margin-top: 1rem;
+      }
+      & + select {
+        margin-top: 1rem;
+      }
+    }
+    
+    .buttonTrashAlt {
+      color: var(--blue);
+      background: none;
+      border: 0;
+      border-radius: 0.25rem;
+    }
+  }
+  .react-modal-goal-hit {
+    width: 100%;
+    font-size: 0.8rem;
+    max-width: 976px;
+    max-height: 900px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 1rem 5rem 2rem 5rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    @media (max-width: 1366px) {
+      max-width: 850px;
+      max-height: 550px;
+    }
+
+    @media (max-width: 1440px) {
+      max-width: 850px;
+      max-height: 650px;
     }
 
     h2 {

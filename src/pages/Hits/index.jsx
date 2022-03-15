@@ -6,7 +6,7 @@ import {
   UilSearchAlt, 
   UilSetting, 
   UilDollarAlt, 
-  UilPlusCircle, UilSync, UilEdit } from '@iconscout/react-unicons'
+  UilPlusCircle, UilSync, UilLink, UilEdit } from '@iconscout/react-unicons'
 import { useContext, useEffect, useState } from 'react'
 import { Footer } from "../../components/Footer"
 import { Header } from "../../components/Header"
@@ -20,6 +20,8 @@ import { ModalNotesEndHitEdit } from "./ModalNotesEndHitEdit"
 import { ModalProvider } from "./ModalProvider"
 import { ModalEditProvider } from "./ModalEditProvider"
 import { AuthContext } from "../../contexts/AuthContext"
+import { ModalLinkNoteHit } from "./ModalLinkNoteHit"
+import { ModalConsolidation } from "./ModalConsolidation"
 
 const headers_requests = [
   { label: "Ano", key: "year" },
@@ -43,6 +45,8 @@ export function Hits() {
   const [isProviderEditionModalOpen, setIsProviderEditionModalOpen] = useState(false)
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
+  const [consolidationModalOpen, setConsolidationModalOpen] = useState(false)
+  const [linkHitModalOpen, setLinkHitModalOpen] = useState(false)
   const [providers, setProviders] = useState([])
   const [providerId, setProviderId] = useState(0)
   const [provider, setProvider] = useState("")
@@ -52,6 +56,22 @@ export function Hits() {
 
   // Edita editora com informações por loja
   const [providersId, setProvidersId] = useState({})
+
+  function handleOpenConsolidation() {
+    setConsolidationModalOpen(true)
+  }
+
+  function handleCloseConsolidation() {
+    setConsolidationModalOpen(false)
+  }
+
+  function handleOpenLinkHitModal() {
+    setLinkHitModalOpen(true)
+  }
+
+  function handleCloseLinkHitModal() {
+    setLinkHitModalOpen(false)
+  }
 
   function handleOpenProviderModal() {
     setProviderModalOpen(true)
@@ -104,13 +124,13 @@ export function Hits() {
       "7": "JUL", "8": "AGO", "9": "SET", "10": "OUT", "11": "NOV", "12": "DEZ",
     })[monthNumber]
 
-    const lastHit = hits[0]
-
+    const currentHit = hits[0]
+    
     const new_hit = {
       situation: "-",
       month: getMonthText(`${new Date().getMonth() + 1}`),
       year: new Date().getFullYear(),
-      last_hit: !lastHit ? "" : lastHit.last_hit,
+      last_hit: !currentHit ? "" : (currentHit.current_hit || currentHit.last_hit),
       store: user.store,
       providers_info_id: providerId
     }
@@ -219,7 +239,6 @@ export function Hits() {
       })
   }
 
-
   useEffect(() => {
     api.get(`hits/${providerId}`)
     .then(response => {
@@ -276,6 +295,7 @@ export function Hits() {
             </button>
             <button
               className="button"
+              onClick={() => handleOpenConsolidation()}
               title="Consolidado de todos os anos"
               type="button"
             >
@@ -290,6 +310,15 @@ export function Hits() {
             >
               <i className="table__icon"><UilPlusCircle size="16" /></i>
               Nova editora
+            </button>
+            <button
+              className="button"
+              onClick={() => handleOpenLinkHitModal()}
+              title="Vincular notas nos acertos"
+              type="button"
+            >
+              <i className="table__icon"><UilLink size="16" /></i>
+              Vincular notas
             </button>
           </section>
 
@@ -307,55 +336,57 @@ export function Hits() {
             <label htmlFor="deactivated">Desativadas</label>
           </div>
 
-          <div>
-            <TableContent>
-              <thead>
-                <tr>
-                  <th className="sticky-col first-col">Ações</th>
-                  <th className="sticky-col second-col">Editora</th>
-                  <th>Acerto</th>
-                  <th>Desconto</th>
-                  <th>Frete</th>
-                  <th>Mapa</th>
-                  <th>Marca</th>
-                  <th>N° Nerus</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  providers.map(provider => {
-                    return (
-                      <tr key={provider.id}>
-                        <td className="sticky-col first-col">
-                          <button
-                            onClick={() => handleOpenHitsModal(provider.id, provider.provider)}
-                            title="Visualizar acertos"
-                            className="button_icon"
-                          >
-                            <i><UilSearchAlt className="button_icon" size="16" /></i>
-                          </button>
-                          <button
-                            onClick={() => handleEditionProviderInfo(provider)}
-                            title="Editar dados da editora"
-                            className="button_icon"
-                          >
-                            <i><UilEdit className="table__icon" size="16" /></i>
-                          </button>
-                        </td>
-                        <td className="sticky-col second-col">{provider.provider.toUpperCase()}</td>
-                        <td >{provider.right}</td>
-                        <td >{provider.discount}</td>
-                        <td >{provider.shipping?.toUpperCase()}</td>
-                        <td >{provider.map?.toUpperCase()}</td>
-                        <td >{provider.brand?.toUpperCase()}</td>
-                        <td >{provider.number_nerus}</td>
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </TableContent>
-          </div>
+          <TableContent>
+            <thead>
+              <tr>
+                <th className="sticky-col first-col">Ações</th>
+                <th>N° Nerus</th>
+                <th className="sticky-col second-col">Editora</th>
+                {/* <th>Acerto</th> */}
+                <th>Desconto</th>
+                <th>Frete</th>
+                <th>Mapa bate?</th>
+                <th>Último acerto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                providers.map(provider => {
+                  return (
+                    <tr key={provider.id}>
+                      <td className="sticky-col first-col">
+                        <button
+                          onClick={() => handleOpenHitsModal(provider.id, provider.provider)}
+                          title="Visualizar acertos"
+                          className="button_icon"
+                        >
+                          <i><UilSearchAlt className="button_icon" size="16" /></i>
+                        </button>
+                        <button
+                          onClick={() => handleEditionProviderInfo(provider)}
+                          title="Editar dados da editora"
+                          className="button_icon"
+                        >
+                          <i><UilEdit className="table__icon" size="16" /></i>
+                        </button>
+                      </td>
+                      <td >{provider.number_nerus}</td>
+                      <td className="sticky-col second-col" title={provider.brand}>{provider.provider.toUpperCase()}</td>
+                      {/* <td >{provider.right}</td> */}
+                      <td >{provider.discount}</td>
+                      <td >{provider.shipping?.toUpperCase()}</td>
+                      <td >{provider.map?.toUpperCase()}</td>
+                      <td >
+                        {
+                          provider.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")
+                        }
+                      </td>
+                    </tr>
+                  )
+                })
+              }
+            </tbody>
+          </TableContent>
 
           <Modal
             isOpen={hitsModalOpen}
@@ -415,6 +446,7 @@ export function Hits() {
                   <th>Valor nerus</th>
                   <th>Valor nota</th>
                   <th>Nota</th>
+                  <th>Motivo</th>
                 </tr>
               </thead>
               <tbody>
@@ -435,8 +467,16 @@ export function Hits() {
                         <td title={hit.comments} className={hit.situation}>
                           {hit.situation?.toUpperCase()}
                         </td>
-                        <td>{hit.last_hit}</td>
-                        <td>{hit.current_hit}</td>
+                        <td >
+                          {
+                            !hit.last_hit || hit.last_hit === "-" ? "" : hit.last_hit.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")
+                          }
+                        </td>
+                        <td >
+                          {
+                            !hit.current_hit || hit.current_hit === "-" ? "" : hit.current_hit.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")
+                          }
+                        </td>
                         <td>
                           {
                             new Intl.NumberFormat("pt-BR", {
@@ -468,6 +508,7 @@ export function Hits() {
                           }
                         </td>
                         <td>{hit.nf}</td>
+                        <td>{hit.reason}</td>
                       </tr>
                     )
                   })
@@ -497,6 +538,16 @@ export function Hits() {
       <ModalProvider
         isOpen={providerModalOpen}
         onRequestClose={handleCloseProviderModal}
+      />
+
+      <ModalLinkNoteHit
+        isOpen={linkHitModalOpen}
+        onRequestClose={handleCloseLinkHitModal}
+      />
+
+      <ModalConsolidation
+        isOpen={consolidationModalOpen}
+        onRequestClose={handleCloseConsolidation}
       />
       <Footer />
     </>

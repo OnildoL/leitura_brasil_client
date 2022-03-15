@@ -119,6 +119,8 @@ export function ModalNotes({ isOpen, onRequestClose, goal, goals, notes, request
           <img src={closeImg} alt="Fechar modal" />
         </button>
 
+        <h1>PEDIDO {goal.request_provider?.toUpperCase()}</h1>
+
         {userCanSeeAdmin && <FormContainer onSubmit={handleUpdateRequest}>
           <h2>Pedido</h2>
 

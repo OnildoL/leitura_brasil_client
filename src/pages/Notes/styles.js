@@ -106,8 +106,8 @@ export const Content = styled.div`
   }
   .defaul_field {
     width: 200px;
-    overflow: hidden;
     display: inline-block;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }

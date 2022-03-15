@@ -1,29 +1,35 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { UilTrashAlt } from '@iconscout/react-unicons'
 import Modal from "react-modal"
 
 import closeImg from "../../../assets/Img/close.svg"
-import { currency, currencyValue } from "../../../utils/masks"
+import { currency, currencyValue, dateMask, initialDateMask } from "../../../utils/masks"
 import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 import { Container, FormContainer, SituationTypeContainer, RadioBox } from "./styles"
 import { useNotification } from "../../../hooks/useNotification"
 import { api } from "../../../services/api"
+import { usePermission } from "../../../hooks/usePermission"
 
 export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote }) {
   useWithSSRAuth()
 
   const dispatch = useNotification()
 
+  const { userCanSeeDev } = usePermission()
   const [lastHit, setLastHit] = useState("")
   const [currentHit, setCurrentHIt] = useState("")
   const [salesReport, setSalesReport] = useState("")
   const [valueNerus, setValueNerus] = useState("")
+  const [reason, setReason] = useState("")
   const [comments, setComments] = useState("")
 
   const [situationTypeHit, setSituationTypeHit] = useState("")
 
   const handleKeyUp = useCallback((e) => {
     currency(e)
+  }, [])
+  const handleKeyUpDateMask = useCallback((e) => {
+    dateMask(e)
   }, [])
 
   function handleUpdateHit(event) {
@@ -33,10 +39,11 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
 
     const update = {
       id: datahit.id,
-      last_hit: !lastHit ? datahit.last_hit : lastHit, 
-      current_hit: !currentHit ? datahit.current_hit : currentHit, 
+      last_hit: !lastHit ? datahit.last_hit : lastHit === "0" ? "" : initialDateMask(lastHit), 
+      current_hit: !currentHit ? datahit.current_hit : currentHit === "0" ? "" : initialDateMask(currentHit), 
       sales_report: !salesReport ? datahit.sales_report : currencyValue(salesReport), 
       value_nerus: !valueNerus ? datahit.value_nerus : currencyValue(valueNerus),
+      reason: !reason ? datahit.reason : reason,
       comments: !comments ? datahit.comments : `${datahit.comments ?? "-" }\n${date}: ${comments}`,
       situation: !situationTypeHit ? datahit.situation : situationTypeHit,
     }
@@ -63,6 +70,17 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
           message: `Erro interno ao tentar atualizar dados!`,
         })
       })
+  }
+
+  function handleRemoveNoteLinking(note_id) {
+    const reallyWantoRemove = window.confirm("Deseja realmente desvincular essa nota?")
+
+    if (reallyWantoRemove) {
+      dispatch({
+        type: "success",
+        message: "Nota desvinculada com sucesso!",
+      })
+    }
   }
 
   return (
@@ -94,17 +112,21 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
             <div title={datahit.last_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Último acerto</div>
             
             <input 
-              type="date"
-              // defaultValue={datahit.last_hit}
+              type="text"
+              onKeyUp={handleKeyUpDateMask}
+              maxLength={10}
               onChange={event => setLastHit(event.target.value)}
+              placeholder={datahit.last_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") ?? ""}
             />
 
             <div title={datahit.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Acerto atual</div>
 
             <input 
-              type="date"
-              // defaultValue={datahit.current_hit}
+              type="text"
+              onKeyUp={handleKeyUpDateMask}
+              maxLength={10}
               onChange={event => setCurrentHIt(event.target.value)}
+              placeholder={datahit.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") ?? ""}
             />
 
             <div>Valor vendas</div>
@@ -128,6 +150,15 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
               onChange={event => setValueNerus(event.target.value)}
               placeholder={datahit.value_nerus ?? 0}
             />
+
+            <div>Motivo</div>
+
+            <input 
+              type="text"
+              onChange={event => setReason(event.target.value)}
+              placeholder={datahit.reason ?? ""}
+            />
+
             <div>
               Situação:&nbsp;
               <span className={datahit.situation}>{datahit.situation?.toUpperCase()}</span>
@@ -175,7 +206,7 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
                 <th>Nota fiscal</th>
                 <th>Valor total</th>
                 <th>Emissão</th>
-                <th>Ações</th>
+                {userCanSeeDev && <th>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -200,13 +231,13 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
                         }  
                       </td>
                       <td>
-                        <button
-                          // onClick={() => handleRemoveNoteLinking(note.access_key)}
+                        {userCanSeeDev && <button
+                          onClick={() => handleRemoveNoteLinking(hitNote.note_id)}
                           className="buttonTrashAlt"
                           type="button"
                         >
                           <i><UilTrashAlt size="16" /></i>
-                        </button>
+                        </button>}
                       </td>
                     </tr>
                   )

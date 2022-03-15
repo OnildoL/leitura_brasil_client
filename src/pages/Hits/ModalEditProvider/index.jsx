@@ -98,6 +98,7 @@ export function ModalEditProvider({ isOpen, onRequestClose, provider }) {
               maxLength={15}
               onChange={event => setBrand(event.target.value)}
               placeholder="Marca"
+              disabled
             />
 
             <input 
