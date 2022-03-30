@@ -8,6 +8,7 @@ import { Login } from "./components/Login"
 import { Notes } from "./pages/Notes"
 import { Profiles } from "./pages/Profiles"
 import { Hits } from "./pages/Hits"
+import { HistoricalHits } from "./pages/HistoricalHits"
 
 export function App() {
   return (
@@ -36,6 +37,12 @@ export function App() {
               <Table />
             </>
           }
+        />
+        <Route 
+          path="/historical-hits"
+          element={
+          <HistoricalHits />
+        }
         />
         <Route
           path="/hits" 

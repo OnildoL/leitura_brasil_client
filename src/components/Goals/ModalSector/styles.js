@@ -90,6 +90,10 @@ export const Summary = styled.div`
   gap: 1rem;
   margin-top: 1rem;
 
+  @media (max-width: 420px) {
+    display: block;
+  }
+
   section {
     text-align: center;
     button {
@@ -103,6 +107,10 @@ export const Summary = styled.div`
     padding: 0.5rem;
     border-radius: 0.25rem;
     color: var(--text-title);
+
+    @media (max-width: 420px) {
+      margin-top: 1rem;
+    }
 
     header {
       display: flex;
@@ -120,6 +128,11 @@ export const SummaryConsolidation = styled.div`
   gap: 1rem;
   margin-top: 1rem;
 
+  @media (max-width: 420px) {
+    display: block;
+  }
+
+
   section {
     text-align: center;
     button {
@@ -133,6 +146,10 @@ export const SummaryConsolidation = styled.div`
     padding: 0.5rem;
     border-radius: 0.25rem;
     color: var(--text-title);
+
+    @media (max-width: 420px) {
+      margin-top: 1rem;
+    }
 
     header {
       display: flex;

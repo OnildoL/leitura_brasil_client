@@ -62,6 +62,10 @@ export const Content = styled.div`
   @media (max-width: 1440px) {
     max-width: 900px;
   }
+  
+  @media (max-width: 420px) {
+    max-width: 300px;
+  }
 
   section {
     h1 {
@@ -114,6 +118,7 @@ export const Content = styled.div`
     padding: 1rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
     background: #FFFFFF;
+
   }
 
   .table__icon {
@@ -155,6 +160,10 @@ export const SectorsManager = styled.section`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+
+  @media (max-width: 420px) {
+    display: block;
+  }
 
   div {
     width: 544px;

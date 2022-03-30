@@ -8,6 +8,10 @@ export const Sectors = styled.section`
   grid-template-columns: repeat(1, 1fr);
   gap: 1rem;
 
+  @media (max-width: 420px) {
+    max-width: 300px;
+  }
+
   div {
     height: 24rem;
     background: var(--shape);
@@ -17,6 +21,10 @@ export const Sectors = styled.section`
 
     @media (max-width: 1440px) {
       max-width: 440px;
+    }
+
+    @media (max-width: 420px) {
+      max-width: 300px;
     }
 
     table {

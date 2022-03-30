@@ -4,8 +4,13 @@ export function usePermission() {
   const userCanSeeDev = useCan({
     roles: ["developer"]
   })
+
   const userCanSeeAdmin = useCan({
     roles: ["developer", "manager"]
+  })
+
+  const userCanSeeCoord = useCan({
+    roles: ["developer", "manager", "coordinator"]
   })
 
   const userCanSeeUsers = useCan({
@@ -20,11 +25,17 @@ export function usePermission() {
     permissions: ["all", "goals.stores"]
   })
 
+  const userCanSeeSelectStoreHits = useCan({
+    permissions: ["all", "hits.stores"]
+  })
+
   return {
     userCanSeeDev,
     userCanSeeAdmin,
     userCanSeeUsers,
     userCanRegisterUsers,
-    userCanSeeSelectStore
+    userCanSeeSelectStore,
+    userCanSeeSelectStoreHits,
+    userCanSeeCoord
   }
 }

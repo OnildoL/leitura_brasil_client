@@ -95,9 +95,9 @@ export const GlobalStyle = createGlobalStyle`
     position: relative;
     border-radius: 0.24rem;
 
-    @media (max-width: 1366px) {
-      
-    }
+    @media (max-width: 420px) {
+    max-width: 300px;
+  }
 
     p {
       color: var(--text-sub-title);
@@ -132,7 +132,7 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
 
-    input {
+    select, input {
       width: 100%;
       margin: 1rem 0 1rem;
       padding: 0.6rem;
@@ -590,6 +590,11 @@ export const GlobalStyle = createGlobalStyle`
       max-height: 880px;
     }
 
+    @media (max-width: 420px) {
+      max-width: 300px;
+      padding: 2rem 2rem 2rem 2rem;
+    }
+
 
     table {
       width: 100%;
@@ -599,6 +604,12 @@ export const GlobalStyle = createGlobalStyle`
         background: var(--background);
       }
 
+      @media (max-width: 420px) {
+        th {
+          white-space: nowrap;
+        }
+      }
+      
       th {
         color: var(--text-body);
         font-weight: 400;
@@ -631,6 +642,11 @@ export const GlobalStyle = createGlobalStyle`
     position: relative;
     border-radius: 0.24rem;
     
+    @media (max-width: 420px) {
+      max-width: 300px;
+      padding: 1rem;
+    }
+
     table {
       width: 100%;
       border-spacing: 0 0.2rem;

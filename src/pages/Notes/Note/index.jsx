@@ -5,8 +5,7 @@ import { useNotification } from "../../../hooks/useNotification"
 import { dateMask, initialDateMask } from "../../../utils/masks"
 import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 import { FormContainer } from "./styles"
-
-
+import { api } from "../../../services/api";
 
 export function Note({ isOpen, onRequestClose, note }) {
   useWithSSRAuth()
@@ -21,33 +20,29 @@ export function Note({ isOpen, onRequestClose, note }) {
 
   function handleUpdateNote(event) {
     event.preventDefault()
-    // new Date()
+
     const update = {
+      access_key: note.access_key,
       input: !input ? note.input : input === "0" ? "" : initialDateMask(input),
     }
-    console.log(update)
-    // api.put("hits", update)
-    //   .then(response => {
-    //     setLastHit("")
-    //     setCurrentHIt("")
-    //     setSalesReport("")
-    //     setValueNerus("")
-    //     setComments("")
-    //     setSituationTypeHit("")
     
-    //     onRequestClose()
+    api.put("notes", update)
+      .then(response => {
+        setInput("")
+    
+        onRequestClose()
 
-    //     dispatch({
-    //       type: "success",
-    //       message: `Nota atualizado com sucesso!`,
-    //     })
-    //   })
-    //   .catch(error => {
-    //     dispatch({
-    //       type: "error",
-    //       message: `Erro interno ao tentar atualizar nota!`,
-    //     })
-    //   })
+        dispatch({
+          type: "success",
+          message: `Nota atualizado com sucesso!`,
+        })
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: `Erro interno ao tentar atualizar nota!`,
+        })
+      })
   }
 
   return (
@@ -70,18 +65,20 @@ export function Note({ isOpen, onRequestClose, note }) {
         <p>{note.access_key}</p>
 
         <FormContainer onSubmit={handleUpdateNote}>
-            <input 
-              type="text"
-              onKeyUp={handleKeyUpDateMask}
-              maxLength={10}
-              onChange={event => setInput(event.target.value)}
-              placeholder={note.input?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") ?? "Data da entrada"}
-            />
+          <div>Entrada</div>
 
-            <button type="submit">
-              Atualizar
-            </button>
-          </FormContainer>
+          <input 
+            type="text"
+            onKeyUp={handleKeyUpDateMask}
+            maxLength={10}
+            onChange={event => setInput(event.target.value)}
+            placeholder={note.input?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") ?? "Data da entrada"}
+          />
+
+          <button type="submit">
+            Atualizar
+          </button>
+        </FormContainer>
 
       </Modal>
     </>

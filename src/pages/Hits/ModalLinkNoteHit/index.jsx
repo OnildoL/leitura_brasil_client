@@ -12,7 +12,7 @@ import { currency, currencyValue } from "../../../utils/masks"
 
 const getFormatdPrice = price => price.toFixed(2)
 
-export function ModalLinkNoteHit({ isOpen, onRequestClose }) {
+export function ModalLinkNoteHit({ isOpen, onRequestClose, selectStore }) {
   useWithSSRAuth()
 
   const handleKeyUp = useCallback((e) => {
@@ -74,7 +74,7 @@ export function ModalLinkNoteHit({ isOpen, onRequestClose }) {
       providers_id: parseInt(provider),
       month: !month ? getMonthText(`${new Date().getMonth() + 1}`): month,
       year: !year ? new Date().getFullYear() : parseInt(year),
-      store: user.store
+      store: !selectStore ? user.store : selectStore
     }
 
     api.get(`hits?data=${JSON.stringify(data)}`)
@@ -129,7 +129,19 @@ export function ModalLinkNoteHit({ isOpen, onRequestClose }) {
   }
 
   function handleUpdateHit() {
+    if (selectStore && selectStore !== user.store) {
+      dispatch({
+        type: "error",
+        message: "Apenas usuários dessa loja podem alterar os dados!",
+      })
+      return
+    }
+
     if (!provider) {
+      dispatch({
+        type: "error",
+        message: "Nenhum fornecedor selecionado!",
+      })
       return
     }
 
@@ -246,7 +258,7 @@ export function ModalLinkNoteHit({ isOpen, onRequestClose }) {
           </button>
 
           <span>
-            Último acerto: { !hit || !hit.last_hit || hit.last_hit === "-" ? "" : Intl.DateTimeFormat("pt-BR").format(new Date(hit.last_hit)) }
+            Último acerto: { hit.last_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") }
           </span>
           <input 
             type="date" 
@@ -257,7 +269,7 @@ export function ModalLinkNoteHit({ isOpen, onRequestClose }) {
           />
 
           <span>
-            Acerto atual: { !hit || !hit.current_hit || hit.current_hit === "-" ? "" : Intl.DateTimeFormat("pt-BR").format(new Date(hit.current_hit)) }
+            Acerto atual: { hit.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") }
           </span>
           <input 
             type="date" 

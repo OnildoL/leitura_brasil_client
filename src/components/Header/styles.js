@@ -22,6 +22,13 @@ export const Content = styled.div`
     max-width: 900px;
   }
 
+  @media (max-width: 420px) {
+    /* max-width: 300px; */
+    nav {
+      display: flex;
+    }
+  }
+
   ul {
     display: flex;
 
@@ -76,6 +83,9 @@ export const Content = styled.div`
   .panel_logo_user {
     display: flex;
     align-items: center;
+    @media (max-width: 420px) {
+      display: none;
+    }
   }
 
   .user {

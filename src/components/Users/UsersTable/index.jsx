@@ -162,8 +162,10 @@ export function Table() {
                 
                 <select value={permission} onChange={event => setPermission(event.target.value)} required>
                   <option value="">-- Escolher permissões --</option>
-                  <option value="users.find">Listagem de usuários</option>
-                  <option value="users.create">Cadastro de usuários</option>
+                  <option value="users.find">Listagem de todos usuários</option>
+                  <option value="users.create">Cadastrar usuários</option>
+                  <option value="goals.stores">Acesso a todas as metas e pedidos das lojas</option>
+                  <option value="hits.stores">Acesso a todos os acertos das lojas</option>
                 </select>
 
                 <button type="submit">

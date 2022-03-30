@@ -146,9 +146,10 @@ export function Users() {
                 <select onChange={event => setRole(event.target.value)} required>
                   <option value="">-- Escolher Função --</option>
                   <option value="manager">Gerente</option>
-                  <option value="coordinator">Coordenador</option>
+                  <option value="coordinator">Coordenador(a)</option>
                   <option value="cpd">Cpd</option>
                   <option value="assistant">Assistente</option>
+                  <option value="administrator">Administrador(a)</option>
                 </select>
 
                 <select onChange={event => setStore(event.target.value)} required>

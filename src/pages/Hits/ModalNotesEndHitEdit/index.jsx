@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { UilTrashAlt } from '@iconscout/react-unicons'
 import Modal from "react-modal"
 
@@ -9,11 +9,14 @@ import { Container, FormContainer, SituationTypeContainer, RadioBox } from "./st
 import { useNotification } from "../../../hooks/useNotification"
 import { api } from "../../../services/api"
 import { usePermission } from "../../../hooks/usePermission"
+import { AuthContext } from "../../../contexts/AuthContext"
 
-export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote }) {
+export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote, selectStore }) {
   useWithSSRAuth()
 
   const dispatch = useNotification()
+
+  const { user } = useContext(AuthContext)
 
   const { userCanSeeDev } = usePermission()
   const [lastHit, setLastHit] = useState("")
@@ -34,6 +37,14 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote 
 
   function handleUpdateHit(event) {
     event.preventDefault()
+
+    if (selectStore && selectStore !== user.store) {
+      dispatch({
+        type: "error",
+        message: "Apenas usuários dessa loja podem alterar os dados!",
+      })
+      return
+    }
 
     const date = new Intl.DateTimeFormat("pt-BR").format(new Date())
 

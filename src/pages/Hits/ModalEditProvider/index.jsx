@@ -7,7 +7,7 @@ import { api } from "../../../services/api"
 import { useWithSSRAuth } from "../../../utils/withSSRAuth"
 import { Container, FormContainer } from "./styles"
 
-export function ModalEditProvider({ isOpen, onRequestClose, provider }) {
+export function ModalEditProvider({ isOpen, onRequestClose, provider, selectStore }) {
   useWithSSRAuth()
   
   const dispatch = useNotification()
@@ -24,7 +24,15 @@ export function ModalEditProvider({ isOpen, onRequestClose, provider }) {
   // Edita editora com informações por loja
   function handleEditionProviderInfo(event) {
     event.preventDefault()
-    
+
+    if (selectStore && selectStore !== user.store) {
+      dispatch({
+        type: "error",
+        message: "Apenas usuários dessa loja podem alterar os dados!",
+      })
+      return
+    }
+
     const data = {
       activated: !activated ? provider.activated : activated,
       discount: !discount ? provider.discount : discount, 

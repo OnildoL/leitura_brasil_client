@@ -8,18 +8,12 @@ export const Container = styled.main`
 export const Content = styled.div`
 
 `
+
 export const FormContainer = styled.form`
   h2 {
     color: var(--text-title);
     font-size: 1.5rem;
     margin-bottom: 1rem;
-  }
-
-  div {
-    margin: 0.2rem 0;
-    span {
-      font-weight: 600;
-    }
   }
 
   textarea {
@@ -76,12 +70,5 @@ export const FormContainer = styled.form`
     &:hover {
       background: var(--blue-light);
     }
-  }
-
-  .ok {
-    color: #33CC95;
-  }
-  .duvida {
-    color: #CC3333;
   }
 `

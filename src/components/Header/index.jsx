@@ -11,7 +11,7 @@ export function Header() {
   useWithSSRAuth()
   const { user } = useContext(AuthContext)
 
-  const { userCanSeeDev } = usePermission()
+  const { userCanSeeDev, userCanSeeAdmin, userCanSeeCoord } = usePermission()
 
   function logOut() {
     signOut()
@@ -40,15 +40,18 @@ export function Header() {
                 <Link to="/users">
                   usuários
                 </Link>
+                <Link to="/historical-hits">
+                  inserir histórico de acertos
+                </Link>
               </ul>
             </li> }
 
             <li>
               gerência
               <ul>
-                <Link to="/goals">
+                {userCanSeeCoord && <Link to="/goals">
                   metas de compra e pedidos
-                </Link>
+                </Link>}
                 <Link to="/hits">
                   acertos
                 </Link>

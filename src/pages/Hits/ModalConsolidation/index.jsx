@@ -8,7 +8,7 @@ import { useWithSSRAuth } from "../../../utils/withSSRAuth";
 import { Container, TableContent } from "./styles";
 import { AuthContext } from "../../../contexts/AuthContext";
 
-export function ModalConsolidation({ isOpen, onRequestClose }) {
+export function ModalConsolidation({ isOpen, onRequestClose, selectStore }) {
   useWithSSRAuth()
   
   const dispatch = useNotification()
@@ -45,7 +45,7 @@ export function ModalConsolidation({ isOpen, onRequestClose }) {
   }
 
   function handleOpenHitsYearMonthModal({ year, month }) {
-    const data = { year, month, store: user.store }
+    const data = { year, month, store: !selectStore ? user.store : selectStore }
 
     api.get(`hits/consolidation/year/month?data=${JSON.stringify(data)}`)
       .then(response => {
@@ -65,7 +65,20 @@ export function ModalConsolidation({ isOpen, onRequestClose }) {
   }
 
   useEffect(() => {
-    api.get("hits/consolidation/hits")
+    api.get(`hits/consolidation/hits?selectStore=${selectStore}`)
+      .then(response => {
+        setConsolidation(response.data)
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Error interno ao tentar consultar consolidado!",
+        })
+      })
+  }, [selectStore])
+
+  useEffect(() => {
+    api.get(`hits/consolidation/hits`)
       .then(response => {
         setConsolidation(response.data)
       })
@@ -198,7 +211,7 @@ export function ModalConsolidation({ isOpen, onRequestClose }) {
               {
                 dataYearMonth.map(hit => {
                   return (
-                    <tr>
+                    <tr key={hit.id}>
                       <td>{hit.year}</td>
                       <td>{hit.month}</td>
                       <td>{hit.provider}</td>

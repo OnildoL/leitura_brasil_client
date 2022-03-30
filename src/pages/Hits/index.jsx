@@ -22,6 +22,7 @@ import { ModalEditProvider } from "./ModalEditProvider"
 import { AuthContext } from "../../contexts/AuthContext"
 import { ModalLinkNoteHit } from "./ModalLinkNoteHit"
 import { ModalConsolidation } from "./ModalConsolidation"
+import { usePermission } from "../../hooks/usePermission"
 
 const headers_requests = [
   { label: "Ano", key: "year" },
@@ -53,6 +54,9 @@ export function Hits() {
   const [hits, setHits] = useState([])
   const [viewhitNote, setViewhitNOte] = useState([])
   const [hit, setHit] = useState([])
+
+  const { userCanSeeSelectStoreHits, userCanSeeCoord } = usePermission()
+  const [selectStore, setSelectStore] = useState("")
 
   // Edita editora com informações por loja
   const [providersId, setProvidersId] = useState({})
@@ -119,6 +123,14 @@ export function Hits() {
   }
 
   function handleCreateNewHit() {
+    if (selectStore && selectStore !== user.store) {
+      dispatch({
+        type: "error",
+        message: "Apenas usuários dessa loja podem alterar os dados!",
+      })
+      return
+    }
+
     const getMonthText = monthNumber => ({
       "1": "JAN", "2": "FEV", "3": "MAR", "4": "ABR", "5": "MAI", "6": "JUN", 
       "7": "JUL", "8": "AGO", "9": "SET", "10": "OUT", "11": "NOV", "12": "DEZ",
@@ -200,7 +212,7 @@ export function Hits() {
   function handleChange(event) {
     setHitList(event.target.value)
 
-    api.get(`providers/${event.target.value}`)
+    api.get(`providers/${event.target.value}?selectStore=${selectStore}`)
       .then(response => {
         setProviders(response.data)
       })
@@ -213,7 +225,7 @@ export function Hits() {
   }
 
   function handleReloadPageProviders() {
-    api.get(`providers/${hitList}`)
+    api.get(`providers/${hitList}?selectStore=${selectStore}`)
       .then(response => {
         setProviders(response.data)
       })
@@ -226,7 +238,7 @@ export function Hits() {
   }
   
   function handleReloadPageHits() {
-    api.get(`hits/${providerId}`)
+    api.get(`hits/${providerId}?selectStore=${selectStore}`)
       .then(response => {
         listHits(response)
       })
@@ -240,7 +252,7 @@ export function Hits() {
   }
 
   useEffect(() => {
-    api.get(`hits/${providerId}`)
+    api.get(`hits/${providerId}?selectStore=${selectStore}`)
     .then(response => {
       listHits(response)
     })
@@ -254,7 +266,7 @@ export function Hits() {
   }, [providerId])
   
   useEffect(() => {
-    api.get(`providers/${hitList}`)
+    api.get(`providers/${hitList}?selectStore=${selectStore}`)
       .then(response => {
         setProviders(response.data)
       })
@@ -302,7 +314,7 @@ export function Hits() {
               <i className="table__icon"><UilDollarAlt size="16" /></i>
               Consolidado
             </button>
-            <button
+            {userCanSeeCoord && <button
               className="button"
               onClick={() => handleOpenProviderModal()}
               title="Cadastrar uma nova editora"
@@ -310,8 +322,8 @@ export function Hits() {
             >
               <i className="table__icon"><UilPlusCircle size="16" /></i>
               Nova editora
-            </button>
-            <button
+            </button>}
+            {userCanSeeCoord && <button
               className="button"
               onClick={() => handleOpenLinkHitModal()}
               title="Vincular notas nos acertos"
@@ -319,8 +331,21 @@ export function Hits() {
             >
               <i className="table__icon"><UilLink size="16" /></i>
               Vincular notas
-            </button>
+            </button>}
           </section>
+
+          {userCanSeeSelectStoreHits && <div>
+            <select onChange={event => setSelectStore(event.target.value)}>
+              <option value="">-- Escolher Loja --</option>
+              <option value="31">(31) Leitura Manaíra</option>
+              <option value="69">(69) Leitura Mangabeira</option>
+              <option value="04">(04) Leitura Tacaruna</option>
+              <option value="109">(109) Leitura Riomar</option>
+              <option value="98">(98) Leitura Recife</option>
+              <option value="108">(108) Leitura Caruaru</option>
+              <option value="76">(76) Leitura Campina Grande</option>
+            </select>
+          </div>}
 
           <div>
             <span>Listar por: </span>
@@ -362,13 +387,13 @@ export function Hits() {
                         >
                           <i><UilSearchAlt className="button_icon" size="16" /></i>
                         </button>
-                        <button
+                        {userCanSeeCoord && <button
                           onClick={() => handleEditionProviderInfo(provider)}
                           title="Editar dados da editora"
                           className="button_icon"
                         >
                           <i><UilEdit className="table__icon" size="16" /></i>
-                        </button>
+                        </button>}
                       </td>
                       <td >{provider.number_nerus}</td>
                       <td className="sticky-col second-col" title={provider.brand}>{provider.provider.toUpperCase()}</td>
@@ -411,7 +436,7 @@ export function Hits() {
               Atualizar
             </button>
 
-            <button
+            {userCanSeeCoord && <button
               className="button"
               onClick={() => handleCreateNewHit()}
               title="Cadastrar um novo pedido"
@@ -419,7 +444,7 @@ export function Hits() {
             >
               <i className="table__icon"><UilPlusCircle size="16" /></i>
               Novo acerto
-            </button>
+            </button>}
             
             <h1>EDITORA {provider?.toUpperCase()}</h1>            
 
@@ -436,7 +461,7 @@ export function Hits() {
             <TableContent>
               <thead>
                 <tr>
-                  <th>Ações</th>
+                  {userCanSeeCoord && <th>Ações</th>}
                   <th>Ano</th>
                   <th>Mês</th>
                   <th>Situação</th>
@@ -454,14 +479,14 @@ export function Hits() {
                   hits.map(hit => {
                     return (
                       <tr key={hit.id}>
-                        <td className="button_icon">
+                        {userCanSeeCoord && <td className="button_icon">
                           <button
                             onClick={() => viewHitNotes(hit)}
                             title="Visualizar notas vinculadas"
                           >
                             <i><UilSearchAlt className="table__icon" size="16" /></i>
                           </button>
-                        </td>
+                        </td>}
                         <td>{hit.year}</td>
                         <td>{hit.month}</td>
                         <td title={hit.comments} className={hit.situation}>
@@ -527,12 +552,14 @@ export function Hits() {
         onRequestClose={handleCloseNotesModal}
         datahit={hit}
         hitNote={viewhitNote}
+        selectStore={selectStore}
       />
       
       <ModalEditProvider
         isOpen={isProviderEditionModalOpen}
         onRequestClose={handleCloseProviderEditionModal}
         provider={providersId}
+        selectStore={selectStore}
       />
 
       <ModalProvider
@@ -543,11 +570,13 @@ export function Hits() {
       <ModalLinkNoteHit
         isOpen={linkHitModalOpen}
         onRequestClose={handleCloseLinkHitModal}
+        selectStore={selectStore}
       />
 
       <ModalConsolidation
         isOpen={consolidationModalOpen}
         onRequestClose={handleCloseConsolidation}
+        selectStore={selectStore}
       />
       <Footer />
     </>
