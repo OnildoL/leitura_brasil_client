@@ -23,6 +23,7 @@ export function Notes() {
   const [fileNotes, setFileNotes] = useState("")
   const [valueSearch, setValueSearch] = useState("")
   const [columnSearch, setColumnSearch] = useState("")
+  const [noteSearch, setNoteSearch] = useState("")
   const el = useRef()
 
   function handleChange(e) {
@@ -96,6 +97,20 @@ export function Notes() {
   }
 
   useEffect(() => {
+    api.get(`notes?content=${noteSearch}`)
+      .then(response => {
+        setTotalPages(1)
+        setNotes(response.data.notes)
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Erro interno ao consultar notas!",
+        })
+      })
+  }, [noteSearch])
+
+  useEffect(() => {
     api.get("notes")
       .then(response => {
         setTotalPages(parseInt(response.data.count))
@@ -131,37 +146,19 @@ export function Notes() {
               <i><UilClipboardNotes className="table__icon" size="16" /></i>
               Opções
             </button>
-          </section>
-
-          {/* {userCanSeeDev && <section className="search panel">
             <input 
-              type="text" 
-              placeholder="Pesquisar"
-              onChange={event => setValueSearch(event.target.value)} 
-            /> 
-
-            <select onChange={event => setColumnSearch(event.target.value)} >
-              <option value="">-- Escolher coluna --</option>
-              <option value="nf">Número</option>
-              <option value="provider">Fornecedor</option>
-              <option value="hangtag">Etiqueta</option>
-              <option value="arrival">Chegou</option>
-              <option value="input">Entrada</option>
-            </select>
-
-            <button
-              onClick={() => handleSearch()}
-            >
-              Pesquisar
-            </button>
-          </section>} */}
+              type="text"
+              onChange={event => setNoteSearch(event.target.value)}
+              placeholder="Número nota fiscal..."
+            />
+          </section>
 
           <div>
             <TableContent>
               <thead>
                 <tr>
-                  <th className="sticky-col first-col">Ações</th>
-                  <th className="sticky-col second-col">Número</th>
+                  <th>Ações</th>
+                  <th>Número</th>
                   <th>Valor total</th>
                   <th>Emissão</th>
                   <th>Fornecedor</th>
@@ -177,7 +174,7 @@ export function Notes() {
                   notes.map(note => {
                     return (
                       <tr key={note.id}>
-                        <td className="sticky-col first-col">
+                        <td>
                           <button
                             onClick={() => handleOpenNote(note)}
                             className="button_icon"
@@ -185,7 +182,7 @@ export function Notes() {
                             <i><UilSearchAlt className="table__icon" size="16" /></i>
                           </button>
                         </td>
-                        <td className="sticky-col second-col">{note.nf}</td>
+                        <td>{note.nf}</td>
                         <td>
                           {
                             new Intl.NumberFormat('pt-BR', {
