@@ -26,6 +26,8 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
   const [reason, setReason] = useState("")
   const [comments, setComments] = useState("")
 
+  const [month, setMonth] = useState("")
+
   const [situationTypeHit, setSituationTypeHit] = useState("")
 
   const handleKeyUp = useCallback((e) => {
@@ -50,24 +52,26 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
     const update = {
       id: datahit.id,
-      last_hit: !lastHit ? datahit.last_hit : lastHit === "0" ? "" : initialDateMask(lastHit), 
-      current_hit: !currentHit ? datahit.current_hit : currentHit === "0" ? "" : initialDateMask(currentHit), 
-      sales_report: !salesReport ? datahit.sales_report : currencyValue(salesReport), 
+      last_hit: !lastHit ? datahit.last_hit : lastHit === "0" ? "" : lastHit,
+      current_hit: !currentHit ? datahit.current_hit : currentHit === "0" ? "" : currentHit,
+      sales_report: !salesReport ? datahit.sales_report : currencyValue(salesReport),
       value_nerus: !valueNerus ? datahit.value_nerus : currencyValue(valueNerus),
+      month: !month ? datahit.month : month,
       reason: !reason ? datahit.reason : reason,
-      comments: !comments ? datahit.comments : `${datahit.comments ?? "-" }\n${date}: ${comments}`,
+      comments: !comments ? datahit.comments : `${datahit.comments ?? "-"}\n${date}: ${comments}`,
       situation: !situationTypeHit ? datahit.situation : situationTypeHit,
     }
 
     api.put("hits", update)
       .then(response => {
+        setMonth("")
         setLastHit("")
         setCurrentHIt("")
         setSalesReport("")
         setValueNerus("")
         setComments("")
         setSituationTypeHit("")
-    
+
         onRequestClose()
 
         dispatch({
@@ -119,11 +123,29 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
           <FormContainer onSubmit={handleUpdateHit}>
             <h2>Editar acerto</h2>
-           
+
+            <div>Mês de registro</div>
+
+            <select onChange={event => setMonth(event.target.value)}>
+              <option value="">-- Escolher mês --</option>
+              <option value="JAN">JAN</option>
+              <option value="FEV">FEV</option>
+              <option value="MAR">MAR</option>
+              <option value="ABR">ABR</option>
+              <option value="MAI">MAI</option>
+              <option value="JUN">JUN</option>
+              <option value="JUL">JUL</option>
+              <option value="AGO">AGO</option>
+              <option value="SET">SET</option>
+              <option value="OUT">OUT</option>
+              <option value="NOV">NOV</option>
+              <option value="DEZ">DEZ</option>
+            </select>
+
             <div title={datahit.last_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Último acerto</div>
-            
-            <input 
-              type="text"
+
+            <input
+              type="date"
               onKeyUp={handleKeyUpDateMask}
               maxLength={10}
               onChange={event => setLastHit(event.target.value)}
@@ -132,8 +154,8 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
             <div title={datahit.current_hit?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}>Acerto atual</div>
 
-            <input 
-              type="text"
+            <input
+              type="date"
               onKeyUp={handleKeyUpDateMask}
               maxLength={10}
               onChange={event => setCurrentHIt(event.target.value)}
@@ -142,7 +164,7 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
             <div>Valor vendas</div>
 
-            <input 
+            <input
               type="text"
               onKeyUp={handleKeyUp}
               maxLength={10}
@@ -150,10 +172,10 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
               onChange={event => setSalesReport(event.target.value)}
               placeholder={datahit.sales_report ?? 0}
             />
-            
+
             <div>Valor nerus</div>
 
-            <input 
+            <input
               type="text"
               onKeyUp={handleKeyUp}
               maxLength={10}
@@ -164,7 +186,7 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
             <div>Motivo</div>
 
-            <input 
+            <input
               type="text"
               onChange={event => setReason(event.target.value)}
               placeholder={datahit.reason ?? ""}
@@ -197,7 +219,7 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
 
             <div title={datahit.comments}>Observações</div>
 
-            <textarea 
+            <textarea
               type="text"
               // defaultValue={datahit.comments}
               onChange={event => setComments(event.target.value)}
@@ -210,7 +232,7 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
           </FormContainer>
 
           <h2>Notas vinculadas</h2>
-          
+
           <table>
             <thead>
               <tr>
@@ -232,14 +254,14 @@ export function ModalNotesEndHitEdit({ isOpen, onRequestClose, datahit, hitNote,
                             style: "currency",
                             currency: "BRL"
                           }).format(note.note_value ?? 0)
-                        }  
+                        }
                       </td>
                       <td>
                         {
-                          new Intl.DateTimeFormat("pt-BR", { 
-                            dateStyle: "short", 
+                          new Intl.DateTimeFormat("pt-BR", {
+                            dateStyle: "short",
                           }).format(new Date(note.issue))
-                        }  
+                        }
                       </td>
                       <td>
                         {userCanSeeDev && <button

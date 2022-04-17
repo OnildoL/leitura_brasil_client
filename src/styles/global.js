@@ -96,8 +96,8 @@ export const GlobalStyle = createGlobalStyle`
     border-radius: 0.24rem;
 
     @media (max-width: 420px) {
-    max-width: 300px;
-  }
+      max-width: 300px;
+    }
 
     p {
       color: var(--text-sub-title);
@@ -130,6 +130,120 @@ export const GlobalStyle = createGlobalStyle`
           color: var(--text-title)
         }
       }
+    }
+
+    select, input {
+      width: 100%;
+      margin: 1rem 0 1rem;
+      padding: 0.6rem;
+      border-radius: 0.25rem;
+
+      border: 1px solid #D7D7D7;
+      background: #E7E9EE;
+
+      font-weight: 400;
+      font-size: 1rem;
+
+      &::placeholder {
+        color: var(--text-body);
+      }
+
+      & + input {
+        margin-top: 1rem;
+      }
+      & + select {
+        margin-top: 1rem;
+      }
+    }
+
+    .button {
+      width: 100%;
+      margin: 0 0 1rem;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: var(--blue);
+      border: 0;
+      padding:0 2rem;
+      border-radius: 0.25rem;
+      height: 3rem;
+
+      transition: 0.3s;
+
+      &:hover {
+        background: var(--blue-light);
+      }
+    }
+  }
+  .react-modal-content-notes-edition {
+    width: 100%;
+    max-width: 776px;
+    max-height: 825px;
+    overflow-y: scroll;
+    background: var(--shape);
+    padding: 3rem;
+    position: relative;
+    border-radius: 0.24rem;
+
+    @media (max-width: 420px) {
+      max-width: 300px;
+    }
+
+    .accessKey {
+      width: 100%;
+      background: none;
+      border: dotted;
+      border-width: 2px;
+      border-radius: 8px;
+    }
+
+    p {
+      color: var(--text-sub-title);
+      font-size: 1rem;
+      margin: 0 0 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-spacing: 0 0.2rem;
+
+      tbody > tr {
+        background: var(--background);
+      }
+
+      th {
+        color: var(--text-body);
+        font-weight: 400;
+        padding: 1rem 2rem;
+        text-align: left;
+        line-height: 1.5rem;
+      }
+
+      td {
+        padding: 1rem 2rem;
+        border: 0;
+        color: var(--text-body);
+
+        &:first-child {
+          color: var(--text-title)
+        }
+      }
+    }
+
+    textarea {
+      height: 100px;
+    }
+  
+    .RECEBER {
+      background-color: #49a649;
+      color: #ffffff;
+    }
+    .NAO-RECEBER {
+      background-color: #ae3939;
+      color: #ffffff;
+    }
+    .PENDENTE {
+      background-color: #d8ab2e;
+      color: #ffffff;
     }
 
     select, input {

@@ -7,9 +7,9 @@ let isRefreshing = false
 let failedRequestsQueue = []
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.8:8080",
+  baseURL: "http://192.168.1.2:8080",
   headers: {
-    Authorization: `Bearer ${cookies["leitura_brasil.token"]}` 
+    Authorization: `Bearer ${cookies["leitura_brasil.token"]}`
   }
 })
 
@@ -38,7 +38,7 @@ api.interceptors.response.use(response => {
             maxAge: 60 * 60 * 24 * 30, // 30 days
             path: "/"
           })
-  
+
           api.defaults.headers["Authorization"] = `Bearer ${response.data.token}`
 
           failedRequestsQueue.forEach(request => request.onSuccess(response.data.token))

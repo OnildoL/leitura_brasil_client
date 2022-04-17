@@ -11,30 +11,30 @@ export function Header() {
   useWithSSRAuth()
   const { user } = useContext(AuthContext)
 
-  const { userCanSeeDev, userCanSeeAdmin, userCanSeeCoord } = usePermission()
+  const { userCanSeeDev, userCanSeeAdmin, userCanSeeCoord, userCanSeeCPD } = usePermission()
 
   function logOut() {
     signOut()
   }
-  
+
   return (
     <Container>
       <Content>
-          <div className="panel_logo_user">
-            <Link to="/main">
-                <div className="logo">
-                  <i className="table__icon"><UilBookOpen size="20" /></i>
-                  leitura
-                </div>
-            </Link>
-            <div className="user">
-              {`Usuário: ${user?.name}`}
+        <div className="panel_logo_user">
+          <Link to="/main">
+            <div className="logo">
+              <i className="table__icon"><UilBookOpen size="20" /></i>
+              leitura
             </div>
+          </Link>
+          <div className="user">
+            {`Usuário: ${user?.name}`}
           </div>
+        </div>
         <nav>
           <ul>
 
-            { userCanSeeDev && <li>
+            {userCanSeeDev && <li>
               admin
               <ul>
                 <Link to="/users">
@@ -44,12 +44,12 @@ export function Header() {
                   inserir histórico de acertos
                 </Link>
               </ul>
-            </li> }
+            </li>}
 
             <li>
               gerência
               <ul>
-                {userCanSeeCoord && <Link to="/goals">
+                {(userCanSeeCoord || userCanSeeCPD) && <Link to="/goals">
                   metas de compra e pedidos
                 </Link>}
                 <Link to="/hits">

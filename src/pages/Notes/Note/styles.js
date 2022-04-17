@@ -10,6 +10,12 @@ export const Content = styled.div`
 `
 
 export const FormContainer = styled.form`
+  .display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
   h2 {
     color: var(--text-title);
     font-size: 1.5rem;
@@ -71,4 +77,81 @@ export const FormContainer = styled.form`
       background: var(--blue-light);
     }
   }
+
+  .CONSIGNACAO, .LIVROS---CONSIG {
+    background-color: #5fa649;
+    color: #ffffff;
+  }
+
+  .ACERTO, .LIVROS---ACERTO {
+    background-color: #7349a6;
+    color: #ffffff;
+  }
+
+  .INFORMATICA {
+    background-color: #496ea6;
+    color: #ffffff;
+  }
+
+  .MUSICA, .GAMES {
+    background-color: #49a6a4;
+    color: #ffffff;
+  }
+  
+  
+  .LIVROS-DIDATICO, .LIVROS-COMPRAS {
+    background-color: #49a67e;
+    color: #ffffff;
+  }
+  
+  .PAPELARIA {
+    background-color: #a6497c;
+    color: #ffffff;
+  }
+
+  .PRESENTES, .BOMBONIERE {
+    background-color: #a65949;
+    color: #ffffff;
+  }
+
+  .RECUSADO, .CANCELADA {
+    background-color: #a64949;
+    color: #ffffff;
+  }
+  
+  .BONIFICADO {
+    background-color: #a68649;
+    color: #ffffff;
+  }
+
+  .DEVOLUÇÃO {
+    background-color: #a64960;
+    color: #ffffff;
+  }
+  
+  .VENDAS-ONLINE {
+    background-color: #a64960;
+    color: #ffffff;
+  }
+
+  .SERVIÇOS {
+    background-color: #a68649;
+    color: #ffffff;
+  }
+
+  .USO-E-CONSUMO, .ACOMPANHAMENTO, .DEVOLSIMBOLICA, .OUTROS {
+    background-color: #a67149;
+    color: #ffffff;
+  }
+
+  .QUADRINHOS {
+    background-color: #49a1a6;
+    color: #ffffff;
+  }
+
+  .TROCA-DE-NOTA, .REAJUSTE-PREÇO {
+    background-color: #d8cf2e;
+    color: #ffffff;
+  }
+
 `

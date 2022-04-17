@@ -1,6 +1,6 @@
 import Modal from "react-modal";
 import closeImg from "../../assets/Img/close.svg"
-import { UilClipboardNotes, UilSearchAlt  } from "@iconscout/react-unicons"
+import { UilClipboardNotes, UilEdit, UilBox, UilFileCheckAlt } from "@iconscout/react-unicons"
 import { useEffect, useRef, useState } from "react";
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
@@ -21,9 +21,9 @@ export function Notes() {
   const [optionsModalOpen, setOptionsModalOpen] = useState(false)
   const [noteModalOpen, setNoteModalOpen] = useState(false)
   const [fileNotes, setFileNotes] = useState("")
-  const [valueSearch, setValueSearch] = useState("")
   const [columnSearch, setColumnSearch] = useState("")
   const [noteSearch, setNoteSearch] = useState("")
+
   const el = useRef()
 
   function handleChange(e) {
@@ -51,10 +51,10 @@ export function Notes() {
 
   function handleInsertNotes(event) {
     event.preventDefault()
-    
+
     const formData = new FormData()
     formData.append("file", fileNotes)
-    
+
     api.post("notes", formData)
       .then(response => {
         dispatch({
@@ -73,33 +73,14 @@ export function Notes() {
     handleCloseOptions()
   }
 
-  function handleSearch() {
-    const filter = notes.filter(note => note[columnSearch] === valueSearch)
-    
-    setNotes(filter)
-  }
   const [totalPages, setTotalPages] = useState(0)
   const [page, setPage] = useState(1)
 
   function nextPageNotes(pageNumber) {
     setPage(pageNumber)
-    
-    api.get(`notes?page=${pageNumber}`)
-    .then(response => {
-      setNotes(response.data.notes)
-    })
-    .catch(error => {
-      dispatch({
-        type: "error",
-        message: "Erro interno ao consultar notas!",
-      })
-    })
-  }
 
-  useEffect(() => {
-    api.get(`notes?content=${noteSearch}`)
+    api.get(`notes?page=${pageNumber}`)
       .then(response => {
-        setTotalPages(1)
         setNotes(response.data.notes)
       })
       .catch(error => {
@@ -108,7 +89,29 @@ export function Notes() {
           message: "Erro interno ao consultar notas!",
         })
       })
-  }, [noteSearch])
+  }
+
+  function searchNotes() {
+    if (!noteSearch || !columnSearch) {
+      dispatch({
+        type: "error",
+        message: "Preencher todos os campos para consultar!",
+      })
+      return
+    }
+
+    api.get(`notes?content=${noteSearch.toUpperCase()}&column=${columnSearch}`)
+      .then(response => {
+        setTotalPages(1)
+        setNotes(response.data.notes)
+      })
+      .catch(error => {
+        dispatch({
+          type: "error",
+          message: "Padrão inválido ou erro interno ao consultar notas!",
+        })
+      })
+  }
 
   useEffect(() => {
     api.get("notes")
@@ -146,11 +149,29 @@ export function Notes() {
               <i><UilClipboardNotes className="table__icon" size="16" /></i>
               Opções
             </button>
-            <input 
-              type="text"
-              onChange={event => setNoteSearch(event.target.value)}
-              placeholder="Número nota fiscal..."
-            />
+            <section>
+              <span>Consultar nota fiscal</span>
+              <select onChange={event => setColumnSearch(event.target.value)}>
+                <option value="">-- Escolher coluna --</option>
+                <option value="nf">Número</option>
+                <option value="provider">Fornecedor</option>
+                <option value="arrival">Chegou</option>
+                <option value="input">Entrada</option>
+                <option value="hangtag">Etiqueta</option>
+                <option value="receive">Recebimento</option>
+              </select>
+              <input
+                type="text"
+                onChange={event => setNoteSearch(event.target.value)}
+                placeholder="Digite aqui..."
+              />
+              <button
+                className="buttonCenter"
+                onClick={() => searchNotes()}
+              >
+                Consultar
+              </button>
+            </section>
           </section>
 
           <div>
@@ -162,9 +183,9 @@ export function Notes() {
                   <th>Valor total</th>
                   <th>Emissão</th>
                   <th>Fornecedor</th>
-                  <th>Receber</th>
                   <th>Etiqueta</th>
                   <th>Frete</th>
+                  <th>Receber</th>
                   <th>Chegou</th>
                   <th>Entrada</th>
                 </tr>
@@ -179,7 +200,19 @@ export function Notes() {
                             onClick={() => handleOpenNote(note)}
                             className="button_icon"
                           >
-                            <i><UilSearchAlt className="table__icon" size="16" /></i>
+                            <i><UilEdit className="table__icon" size="16" /></i>
+                          </button>
+                          <button
+                            // onClick={() => handleOpenNote(note)}
+                            className="button_icon"
+                          >
+                            <i><UilBox className="table__icon" size="16" /></i>
+                          </button>
+                          <button
+                            // onClick={() => handleOpenNote(note)}
+                            className="button_icon"
+                          >
+                            <i><UilFileCheckAlt  className="table__icon" size="16" /></i>
                           </button>
                         </td>
                         <td>{note.nf}</td>
@@ -189,19 +222,19 @@ export function Notes() {
                               style: 'currency',
                               currency: 'BRL'
                             }).format(note.value ?? 0)
-                          }  
+                          }
                         </td>
                         <td>
                           {
-                            new Intl.DateTimeFormat('pt-BR', { 
-                              dateStyle: "short", 
+                            new Intl.DateTimeFormat('pt-BR', {
+                              dateStyle: "short",
                             }).format(new Date(note.issue))
                           }
                         </td>
                         <td className="defaul_field">{note.provider}</td>
-                        <td>{note.receive}</td>
-                        <td>{note.hangtag}</td>
+                        <td className={note.hangtag?.replace(".", "").replace(/\s/g, "-")} >{note.hangtag}</td>
                         <td>{note.situation}</td>
+                        <td className={note.receive} title={note.comment}>{note.receive?.toUpperCase()}</td>
                         <td>{note.arrival?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}</td>
                         <td>{note.input?.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1")}</td>
                       </tr>
@@ -211,16 +244,16 @@ export function Notes() {
               </tbody>
             </TableContent>
           </div>
-        
+
           <Modal
             isOpen={optionsModalOpen}
             onRequestClose={handleCloseOptions}
             overlayClassName="react-modal-overlay"
             className="react-modal-content-note"
           >
-            <button 
-              type="button" 
-              onClick={handleCloseOptions} 
+            <button
+              type="button"
+              onClick={handleCloseOptions}
               className="react-modal-close"
             >
               <img src={closeImg} alt="Fechar modal" />
@@ -231,7 +264,7 @@ export function Notes() {
 
             <form onSubmit={handleInsertNotes}>
               <span>Inserir notas</span>
-              <input type="file" ref={el} onChange={handleChange} required/>
+              <input type="file" ref={el} onChange={handleChange} required />
               <button type="submit" className="button">
                 Inserir
               </button>
@@ -255,7 +288,7 @@ export function Notes() {
 
           </Modal>
 
-          <Note 
+          <Note
             isOpen={noteModalOpen}
             onRequestClose={handleCloseNote}
             note={note}
@@ -264,10 +297,10 @@ export function Notes() {
         </Content>
 
         <Pagination>
-            <div>
-              Mostrando <strong>{`${(page * 15 - 15) + 1}`}</strong> - <strong>{`${page * 15 >= totalPages ? totalPages : page * 15}`}</strong> de <strong>{`${totalPages}`}</strong> notas totais
-              { page === 1
-              ?             
+          <div>
+            Mostrando <strong>{`${(page * 15 - 15) + 1}`}</strong> - <strong>{`${page * 15 >= totalPages ? totalPages : page * 15}`}</strong> de <strong>{`${totalPages}`}</strong> notas totais
+            {page === 1
+              ?
               <button
                 onClick={() => nextPageNotes(page - 1)}
                 disabled
@@ -275,14 +308,14 @@ export function Notes() {
                 Anterior
               </button>
               :
-                <button
-                  onClick={() => nextPageNotes(page - 1)}
-                >
-                  Anterior
-                </button>
-              }
-              { page * 15 >= totalPages
-              ?             
+              <button
+                onClick={() => nextPageNotes(page - 1)}
+              >
+                Anterior
+              </button>
+            }
+            {page * 15 >= totalPages
+              ?
               <button
                 onClick={() => nextPageNotes(page + 1)}
                 disabled
@@ -290,13 +323,13 @@ export function Notes() {
                 Próxima
               </button>
               :
-                <button
-                  onClick={() => nextPageNotes(page + 1)}
-                >
-                  Próxima
-                </button>
-              }
-            </div>
+              <button
+                onClick={() => nextPageNotes(page + 1)}
+              >
+                Próxima
+              </button>
+            }
+          </div>
         </Pagination>
 
       </Container>

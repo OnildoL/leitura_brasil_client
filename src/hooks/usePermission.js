@@ -13,6 +13,10 @@ export function usePermission() {
     roles: ["developer", "manager", "coordinator"]
   })
 
+  const userCanSeeCPD = useCan({
+    roles: ["developer", "manager", "coordinator", "cpd"]
+  })
+
   const userCanSeeUsers = useCan({
     permissions: ["all", "users.find"],
   })
@@ -36,6 +40,7 @@ export function usePermission() {
     userCanRegisterUsers,
     userCanSeeSelectStore,
     userCanSeeSelectStoreHits,
-    userCanSeeCoord
+    userCanSeeCoord,
+    userCanSeeCPD
   }
 }
